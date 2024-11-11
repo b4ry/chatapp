@@ -1,4 +1,4 @@
 .currentChatWindow {
     grid-area: currentChatWindow;
-    background-color: #F7F6F2;
+    background-color: var(--primary-color);
 }

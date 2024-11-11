@@ -1,0 +1,4 @@
+.currentChatHeader {
+    grid-area: currentChatHeader;
+    background-color: var(--secondary-color);
+}

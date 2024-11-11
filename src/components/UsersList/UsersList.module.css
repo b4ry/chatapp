@@ -1,4 +1,4 @@
 .usersList {
     grid-area: usersList;
-    background-color: #F0E5CF;
+    background-color: var(--accent-color);
 }

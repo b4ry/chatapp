@@ -3,7 +3,7 @@
     display: grid;
     grid-template-rows: 5fr 80fr 15fr;
     grid-template-areas:
-        "currentChatUser"
+        "currentChatHeader"
         "currentChatWindow"
         "currentChatSendMessage";
 }
