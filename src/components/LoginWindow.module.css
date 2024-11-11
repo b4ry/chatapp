@@ -32,6 +32,12 @@ input {
     border: none;
     border-radius: 3px;
     background-color: var(--primary-color);
+    font-family: 'Sour Gummy', sans-serif;
+    font-style: italic;
+}
+
+input:focus {
+    outline: none;
 }
 
 button {
