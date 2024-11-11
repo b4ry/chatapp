@@ -1,0 +1,8 @@
+.usersList {
+    grid-area: usersListSection;
+    display: grid;
+    grid-template-rows: 10fr 90fr;
+    grid-template-areas:
+        "usersListHeader"
+        "usersList";
+}

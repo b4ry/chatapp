@@ -1,12 +1,12 @@
 import styles from "./Chat.module.css";
-import ChatWindow from "./ChatWindow/ChatWindow";
-import UsersList from "./UsersList";
+import ChatWindowSection from "./ChatWindow/ChatWindowSection";
+import UsersListSection from "./UsersList/UsersListSection";
 
 export default function Chat() {
     return (
         <div className={styles.chat}>
-            <ChatWindow />
-            <UsersList />
+            <ChatWindowSection />
+            <UsersListSection />
         </div>
     );
 }

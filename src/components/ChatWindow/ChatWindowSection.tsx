@@ -1,14 +1,14 @@
-import styles from "./ChatWindow.module.css";
+import styles from "./ChatWindowSection.module.css";
 import CurrentChatSendMessage from "./CurrentChatSendMessage";
 import CurrentChatUser from "./CurrentChatUser";
 import CurrentChatWindow from "./CurrentChatWindow";
 
-export default function ChatWindow() {
+export default function ChatWindowSection() {
     return (
-        <div className={styles.chatWindow}>
+        <section className={styles.chatWindow}>
             <CurrentChatUser />
             <CurrentChatWindow />
             <CurrentChatSendMessage />
-        </div>
+        </section>
     );
 }

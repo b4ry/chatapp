@@ -1,0 +1,4 @@
+.usersListHeader {
+    grid-area: usersListHeader;
+    background-color: lightslategray;
+}
