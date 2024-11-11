@@ -1,0 +1,4 @@
+.currentChatWindow {
+    grid-area: currentChatWindow;
+    background-color: blueviolet;
+}

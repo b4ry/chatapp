@@ -1,0 +1,4 @@
+.currentChatSendMessage {
+    grid-area: currentChatSendMessage;
+    background-color: chocolate;
+}

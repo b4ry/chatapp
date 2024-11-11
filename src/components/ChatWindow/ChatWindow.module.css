@@ -1,0 +1,10 @@
+.chatWindow {
+    grid-area: chatWindow;
+    display: grid;
+    grid-template-rows: 5fr 80fr 15fr;
+    grid-template-areas:
+        "currentChatUser"
+        "currentChatWindow"
+        "currentChatSendMessage";
+    background-color: aqua;
+}

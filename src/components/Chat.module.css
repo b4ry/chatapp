@@ -1,0 +1,7 @@
+.chat {
+    grid-area: chat;
+    display: grid;
+    grid-template-columns: 85fr 15fr;
+    grid-template-areas: "chatWindow usersList";
+    background-color: brown;
+}

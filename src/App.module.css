@@ -1,0 +1,10 @@
+.app {
+    display: grid;
+    width: 100vw;
+    height: 100vh;
+    grid-template-columns: 85fr 15fr;
+    grid-template-rows: 5fr 95fr;
+    grid-template-areas: 
+        "header header"
+        "chat chat";
+}

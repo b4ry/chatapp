@@ -1,0 +1,4 @@
+.currentChatUser {
+    grid-area: currentChatUser;
+    background-color: aquamarine;
+}
