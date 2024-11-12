@@ -7,11 +7,13 @@ const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%])[A-Za-z\d!@#$
 
 export default function LoginWindow() {
     const { setIsUserLoggedIn } = useContext(LoginContext);
+
     const [ isPasswordValid, setIsPasswordValid ] = useState<boolean>(true);
     const [ isConfirmPasswordValid, setIsConfirmPasswordValid ] = useState<boolean>(true);
     const [ isRegistering, setIsRegistering ] = useState(false);
     const [ isSubmitting, setIsSubmitting ] = useState(false);
-    const [ submissionMessage, setSubmissionMessage ] = useState("");
+    const [ submissionErrorMessage, setSubmissionErrorMessage ] = useState("");
+
     const passwordRef = useRef<HTMLInputElement>(null);
     const confirmPasswordRef = useRef<HTMLInputElement>(null);
 
@@ -19,13 +21,14 @@ export default function LoginWindow() {
         event.preventDefault();
 
         setIsSubmitting(true);
-        setSubmissionMessage("");
+        setSubmissionErrorMessage("");
 
         const formData = new FormData(event.currentTarget);
         const entries = Object.fromEntries(formData.entries());
 
         try {
-            const response = await fetch("http://localhost:5126/api/auth/login", {
+            const url = isRegistering ? process.env.REACT_APP_CERBERUS_API_AUTH_REGISTER_URL : process.env.REACT_APP_CERBERUS_API_AUTH_LOGIN_URL;
+            const response = await fetch(url, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -37,11 +40,11 @@ export default function LoginWindow() {
                 setIsUserLoggedIn(true);
             } else {
                 setIsUserLoggedIn(false);
-                setSubmissionMessage(`Failed to submit form. Reason: ${response.statusText}`);
+                setSubmissionErrorMessage(`Failed to submit form. Reason: ${response.statusText}`);
             }
         } catch (error) {   
             setIsUserLoggedIn(false);
-            setSubmissionMessage(`Failed to submit form. Error: ${error}`);
+            setSubmissionErrorMessage(`Failed to submit form. Error: ${error}`);
         } finally {
             setIsSubmitting(false);
         }
@@ -73,6 +76,11 @@ export default function LoginWindow() {
         }
     }
 
+    function handleSwitchingWindow() {
+        setIsRegistering(prevState => !prevState);
+        setSubmissionErrorMessage("");
+    }
+
     let content = 
         <div className={styles.loginWindow}>
             <form onSubmit={handleOnSubmit}>
@@ -81,9 +89,9 @@ export default function LoginWindow() {
                 <label htmlFor="password">Password</label>
                 <input type="password" id="password" name="password"></input>
                 <button type="submit" disabled={isSubmitting}>{ isSubmitting ? "...submitting" : "Log in" }</button>
-                <p onClick={() => setIsRegistering(true)}>or Register!</p>
+                <p onClick={handleSwitchingWindow}>or Register!</p>
             </form>
-            <span className={styles.requestErrorMessage}>{submissionMessage}</span>
+            <span className={styles.requestErrorMessage}>{submissionErrorMessage}</span>
         </div>;
 
     if (isRegistering) {
@@ -109,9 +117,9 @@ export default function LoginWindow() {
                     </span> 
                 }
                 <button type="submit" disabled={isSubmitting}>{ isSubmitting ? "...submitting" : "Register" }</button>
-                <p onClick={() => setIsRegistering(false)}>come back to Login!</p>
+                <p onClick={handleSwitchingWindow}>come back to Login!</p>
             </form>
-            <span className={styles.requestErrorMessage}>{submissionMessage}</span>
+            <span className={styles.requestErrorMessage}>{submissionErrorMessage}</span>
         </div>;
     }
 
