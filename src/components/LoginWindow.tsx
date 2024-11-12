@@ -1,10 +1,11 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import styles from "./LoginWindow.module.css";
 
 import { LoginContext } from '../stores/LoginContext';
 
 export default function LoginWindow() {
     const { setIsUserLoggedIn } = useContext(LoginContext);
+    const [ isRegistering, setIsRegistering ] = useState(false);
 
     function handleOnSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -19,8 +20,13 @@ export default function LoginWindow() {
                 <input id="userName" name="userName"></input>
                 <label htmlFor="password">Password</label>
                 <input type="password" id="password" name="password"></input>
-                <button type="submit">Log in</button>
-                <p>or Register!</p>
+                { isRegistering && <>
+                        <label htmlFor="confirmPassword">Confirm password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword"></input>
+                    </>
+                }
+                <button type="submit">{ isRegistering ? "Register" : "Log in" }</button>
+                <p onClick={() => setIsRegistering((prevState) => !prevState)}>{ isRegistering ? "come back to Login!" : "or Register!" }</p>
             </form>
         </div>
     )
