@@ -77,7 +77,13 @@ p:hover {
     cursor: pointer;
 }
 
-span {
+.validationError {
+    margin-top: 5px;
+    color: var(--error-color);
+    font-size: small;
+}
+
+.requestErrorMessage {
     margin-top: 10px;
     color: var(--error-color);
 }
