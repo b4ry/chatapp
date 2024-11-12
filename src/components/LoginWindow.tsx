@@ -1,4 +1,4 @@
-import { useCallback, useContext, useRef, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import styles from "./LoginWindow.module.css";
 
 import { LoginContext } from '../stores/LoginContext';
@@ -13,9 +13,8 @@ export default function LoginWindow() {
     const [isRegistering, setIsRegistering] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submissionErrorMessage, setSubmissionErrorMessage] = useState("");
-
-    const passwordRef = useRef<HTMLInputElement>(null);
-    const confirmPasswordRef = useRef<HTMLInputElement>(null);
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
 
     const handleOnSubmit = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -47,34 +46,41 @@ export default function LoginWindow() {
         } finally {
             setIsSubmitting(false);
         }
-    }, [isRegistering, setIsSubmitting, setSubmissionErrorMessage, setIsUserLoggedIn]);
+    }, [isRegistering, setIsUserLoggedIn]);
 
     const handlePasswordChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-        const password = event.target.value;
+        const input = event.target.value;
 
-        setIsPasswordValid(passwordRegex.test(password));
+        setPassword(input);
+        setIsPasswordValid(passwordRegex.test(input));
 
-        if (confirmPasswordRef.current?.value === password) {
+        if (confirmPassword === input) {
             setIsConfirmPasswordValid(true);
         } else {
             setIsConfirmPasswordValid(false);
         }
-    }, [setIsPasswordValid, setIsConfirmPasswordValid]);
+    }, [confirmPassword]);
 
     const handleConfirmPasswordChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-        const confirmPassword = event.target.value;
+        const input = event.target.value;
+        
+        setConfirmPassword(input);
 
-        if (passwordRef.current?.value === confirmPassword) {
+        if (password === input) {
             setIsConfirmPasswordValid(true);
         } else {
             setIsConfirmPasswordValid(false);
         }
-    }, [setIsConfirmPasswordValid]);
+    }, [password]);
 
     const toggleWindow = useCallback(() => {
         setIsRegistering((prevState) => !prevState);
-        setSubmissionErrorMessage(""); // Clear errors when switching
-    }, [setIsRegistering, setSubmissionErrorMessage]);
+        setSubmissionErrorMessage("");
+        setPassword("");
+        setConfirmPassword("");
+        setIsPasswordValid(true);
+        setIsConfirmPasswordValid(true);
+    }, []);
 
     const renderForm = () => (
         <div className={styles.loginWindow}>
@@ -84,14 +90,14 @@ export default function LoginWindow() {
 
                 <label htmlFor="password">Password</label>
                 <input
-                    ref={passwordRef}
                     type="password"
                     id="password"
                     name="password"
                     onChange={handlePasswordChange}
+                    value={password}
                     required
                 />
-                {!isPasswordValid && (
+                { (isRegistering && !isPasswordValid) && (
                     <span className={styles.validationError}>
                         Password should have at least 8 characters, one small and one big letter, one number, and a special character (!@#$%)
                     </span>
@@ -101,11 +107,11 @@ export default function LoginWindow() {
                     <>
                         <label htmlFor="confirmPassword">Confirm password</label>
                         <input
-                            ref={confirmPasswordRef}
                             type="password"
                             id="confirmPassword"
                             name="confirmPassword"
                             onChange={handleConfirmPasswordChange}
+                            value={confirmPassword}
                             required
                         />
                         {!isConfirmPasswordValid && (
