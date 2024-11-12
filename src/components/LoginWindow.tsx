@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { useCallback, useContext, useRef, useState } from "react";
 import styles from "./LoginWindow.module.css";
 
 import { LoginContext } from '../stores/LoginContext';
@@ -17,7 +17,7 @@ export default function LoginWindow() {
     const passwordRef = useRef<HTMLInputElement>(null);
     const confirmPasswordRef = useRef<HTMLInputElement>(null);
 
-    async function handleOnSubmit(event: React.FormEvent<HTMLFormElement>) {
+    const handleOnSubmit = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setIsSubmitting(true);
         setSubmissionErrorMessage("");
@@ -47,9 +47,9 @@ export default function LoginWindow() {
         } finally {
             setIsSubmitting(false);
         }
-    }
+    }, [isRegistering, setIsSubmitting, setSubmissionErrorMessage, setIsUserLoggedIn]);
 
-    function handlePasswordChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const handlePasswordChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         const password = event.target.value;
 
         setIsPasswordValid(passwordRegex.test(password));
@@ -59,9 +59,9 @@ export default function LoginWindow() {
         } else {
             setIsConfirmPasswordValid(false);
         }
-    }
+    }, [setIsPasswordValid, setIsConfirmPasswordValid]);
 
-    function handleConfirmPasswordChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const handleConfirmPasswordChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         const confirmPassword = event.target.value;
 
         if (passwordRef.current?.value === confirmPassword) {
@@ -69,12 +69,12 @@ export default function LoginWindow() {
         } else {
             setIsConfirmPasswordValid(false);
         }
-    }
+    }, [setIsConfirmPasswordValid]);
 
-    function toggleWindow() {
+    const toggleWindow = useCallback(() => {
         setIsRegistering((prevState) => !prevState);
         setSubmissionErrorMessage(""); // Clear errors when switching
-    }
+    }, [setIsRegistering, setSubmissionErrorMessage]);
 
     const renderForm = () => (
         <div className={styles.loginWindow}>
