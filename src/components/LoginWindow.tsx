@@ -88,8 +88,8 @@ export default function LoginWindow() {
                 <input id="userName" name="userName"></input>
                 <label htmlFor="password">Password</label>
                 <input type="password" id="password" name="password"></input>
-                <button type="submit" disabled={isSubmitting}>{ isSubmitting ? "...submitting" : "Log in" }</button>
-                <p onClick={handleSwitchingWindow}>or Register!</p>
+                <button type="submit" disabled={isSubmitting}>{ isSubmitting ? "...logging in" : "Log in" }</button>
+                <p onClick={handleSwitchingWindow}>or register!</p>
             </form>
             <span className={styles.requestErrorMessage}>{submissionErrorMessage}</span>
         </div>;
@@ -116,8 +116,8 @@ export default function LoginWindow() {
                         Passwords do not match!
                     </span> 
                 }
-                <button type="submit" disabled={isSubmitting}>{ isSubmitting ? "...submitting" : "Register" }</button>
-                <p onClick={handleSwitchingWindow}>come back to Login!</p>
+                <button type="submit" disabled={isSubmitting}>{ isSubmitting ? "...registering" : "Register" }</button>
+                <p onClick={handleSwitchingWindow}>back to login!</p>
             </form>
             <span className={styles.requestErrorMessage}>{submissionErrorMessage}</span>
         </div>;
