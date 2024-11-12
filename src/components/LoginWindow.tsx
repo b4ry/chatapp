@@ -20,6 +20,7 @@ export default function LoginWindow() {
                 <label htmlFor="password">Password</label>
                 <input type="password" id="password" name="password"></input>
                 <button type="submit">Log in</button>
+                <p>or Register!</p>
             </form>
         </div>
     )
