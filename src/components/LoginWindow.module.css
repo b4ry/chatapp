@@ -11,7 +11,7 @@
 
 form {
     margin-top: 100px;
-    width: 600px;
+    width: 400px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -42,7 +42,7 @@ input:focus {
 }
 
 button {
-    height: 100px;
+    height: 60px;
     margin-top: 50px;
     background-color: var(--emphasize-color);
     border: none;
@@ -69,7 +69,6 @@ button:disabled {
 p {
     margin-bottom: 0px;
     color: var(--emphasize-color);
-    text-decoration: underline;
     align-self: flex-end;
 }
 
