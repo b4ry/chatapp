@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import styles from "./LoginWindow.module.css";
 
 import { useAuth } from '../stores/AuthContext';
+import { AuthToken } from "../dtos/AuthToken";
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%])[A-Za-z\d!@#$%]{8,}$/;
 
@@ -36,8 +37,8 @@ export default function LoginWindow() {
             });
 
             if (response.ok) {
-                const data = await response.text();
-                login(data);
+                const authToken: AuthToken = await response.json();
+                login(authToken);
             } else {
                 throw new Error(`${response.statusText}`);
             }

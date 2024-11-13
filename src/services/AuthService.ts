@@ -1,15 +1,20 @@
-const jwtToken: string = "jwtToken";
+import { AuthToken } from "../dtos/AuthToken";
 
-export function saveToken(token: string) {
-    localStorage.setItem(jwtToken, token);
+const jwtToken: string = "jwtToken";
+const refreshToken: string = "refreshToken";
+
+export function saveToken(authToken: AuthToken) {
+    localStorage.setItem(jwtToken, authToken.jwt);
+    localStorage.setItem(refreshToken, authToken.refreshToken);
 }
 
 export function getToken() {
-    return localStorage.getItem(jwtToken);
+    return [localStorage.getItem(jwtToken), localStorage.getItem(refreshToken)];
 }
 
 export function removeToken() {
     localStorage.removeItem(jwtToken);
+    localStorage.removeItem(refreshToken);
 }
 
 export function getTokenExpiration(token: string) {

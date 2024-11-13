@@ -1,9 +1,10 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { getToken, getTokenExpiration, removeToken, saveToken } from "../services/AuthService";
+import { AuthToken } from "../dtos/AuthToken";
 
 interface IAuthContext {
     isAuthenticated: boolean;
-    login: (token: string) => void;
+    login: (authToken: AuthToken) => void;
     logout: () => void;
 }
 
@@ -44,10 +45,10 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ( { children } )
     }, [logout]);
 
     useEffect(() => {
-        const token = getToken();
-        const expirationTime = token && getTokenExpiration(token);
+        const [jwtToken, refreshToken] = getToken();
+        const expirationTime = jwtToken && getTokenExpiration(jwtToken);
 
-        if (token && expirationTime && Date.now() < expirationTime) {
+        if (jwtToken && expirationTime && Date.now() < expirationTime) {
             setIsAuthenticated(true);
             startLogoutTimer(expirationTime);
         } else {
@@ -61,11 +62,11 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ( { children } )
         };
     }, [startLogoutTimer, clearTimer]);
 
-    const login = useCallback((token: string) => {
-        saveToken(token);
+    const login = useCallback((authToken: AuthToken) => {
+        saveToken(authToken);
         setIsAuthenticated(true);
 
-        const expirationTime = getTokenExpiration(token);
+        const expirationTime = getTokenExpiration(authToken.jwt);
 
         if (expirationTime) {
             startLogoutTimer(expirationTime);
