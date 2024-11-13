@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { getToken, getTokenExpiration, removeToken, saveToken } from "../services/AuthService";
 
 interface IAuthContext {
@@ -15,47 +15,62 @@ interface AuthContextProviderProps {
 
 const AuthContextProvider: React.FC<AuthContextProviderProps> = ( { children } ) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const timer = useRef<NodeJS.Timeout | null>(null);
+
+    const clearTimer = useCallback(() => {
+        clearTimeout(timer.current!);
+        timer.current = null
+    }, []);
+
+    const logout = useCallback(() => {
+        if (timer.current) {
+            clearTimer();
+        }
+
+        removeToken();
+        setIsAuthenticated(false);
+    }, [clearTimer]);
+
+    const startLogoutTimer = useCallback((expirationTime: number) => {
+        const timeUntilExpiration = expirationTime - Date.now();
+        
+        if (timer.current) {
+            clearTimeout(timer.current);
+        }
+
+        timer.current = setTimeout(() => {
+            logout();
+        }, timeUntilExpiration);
+    }, [logout]);
 
     useEffect(() => {
         const token = getToken();
+        const expirationTime = token && getTokenExpiration(token);
 
-        if (token) {
-            const expirationTime = getTokenExpiration(token);
-
-            if (expirationTime && Date.now() < expirationTime) {
-                setIsAuthenticated(true);
-
-                const timeUntilExpiration = expirationTime - Date.now();
-                const expirationTimeout = setTimeout(() => {
-                    logout();
-                }, timeUntilExpiration);
-
-                return () => clearTimeout(expirationTimeout);
-            } else {
-                removeToken();
-            }
+        if (token && expirationTime && Date.now() < expirationTime) {
+            setIsAuthenticated(true);
+            startLogoutTimer(expirationTime);
+        } else {
+            removeToken();
         }
-    }, []);
 
-    const login = (token: string) => {
+        return () => {
+            if (timer.current) {
+                clearTimer();
+            }
+        };
+    }, [startLogoutTimer, clearTimer]);
+
+    const login = useCallback((token: string) => {
         saveToken(token);
         setIsAuthenticated(true);
 
         const expirationTime = getTokenExpiration(token);
 
         if (expirationTime) {
-            const timeUntilExpiration = expirationTime - Date.now();
-            
-            setTimeout(() => {
-                logout();
-            }, timeUntilExpiration);
+            startLogoutTimer(expirationTime);
         }
-    };
-
-    const logout = () => {
-        removeToken();
-        setIsAuthenticated(false);
-    };
+    }, [startLogoutTimer]);
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
