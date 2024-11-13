@@ -1,12 +1,12 @@
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useState } from "react";
 import styles from "./LoginWindow.module.css";
 
-import { LoginContext } from '../stores/LoginContext';
+import { useAuth } from '../stores/AuthContext';
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%])[A-Za-z\d!@#$%]{8,}$/;
 
 export default function LoginWindow() {
-    const { setIsUserLoggedIn } = useContext(LoginContext);
+    const { login } = useAuth();
 
     const [isPasswordValid, setIsPasswordValid] = useState(true);
     const [isConfirmPasswordValid, setIsConfirmPasswordValid] = useState(true);
@@ -36,17 +36,17 @@ export default function LoginWindow() {
             });
 
             if (response.ok) {
-                setIsUserLoggedIn(true);
+                const data = await response.text();
+                login(data);
             } else {
                 throw new Error(`${response.statusText}`);
             }
         } catch (error) {
-            setIsUserLoggedIn(false);
             setSubmissionErrorMessage(`Failed to submit form. ${error}`);
         } finally {
             setIsSubmitting(false);
         }
-    }, [isRegistering, setIsUserLoggedIn]);
+    }, [isRegistering, login]);
 
     const handlePasswordChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         const input = event.target.value;

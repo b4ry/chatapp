@@ -1,21 +1,21 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import './variables.css';
 
 import styles from "./App.module.css";
 import Header from './components/Header';
 import Chat from './components/Chat';
-import { LoginContext } from './stores/LoginContext';
+import { useAuth } from './stores/AuthContext';
 import LoginWindow from './components/LoginWindow';
 
 function App() {
-  const { isUserLoggedIn } = useContext(LoginContext);
+  const { isAuthenticated } = useAuth();
 
   let content = <div className={styles.app}>
     <Header />
     <Chat />
   </div>;
 
-  if(!isUserLoggedIn) {
+  if(!isAuthenticated) {
     content = <LoginWindow />;
   }
   

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import LoginContextProvider from './stores/LoginContext';
+import AuthContextProvider from './stores/AuthContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -11,9 +11,9 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <LoginContextProvider>
+    <AuthContextProvider>
       <App />
-    </LoginContextProvider>
+    </AuthContextProvider>
   </React.StrictMode>
 );
 
