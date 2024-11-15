@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { getToken, getTokenExpiration, removeToken, saveToken } from "../services/AuthService";
 import { AuthToken } from "../dtos/AuthToken";
+import { RefreshTokenRequest } from "../dtos/RefreshTokenRequest";
 
 interface IAuthContext {
     isAuthenticated: boolean;
@@ -13,6 +14,9 @@ export const AuthContext = createContext<IAuthContext | undefined>(undefined);
 interface AuthContextProviderProps {
     children?: ReactNode;
 }
+
+const usernameStorageItemKey: string = "username";
+const accessTokenStorageItemKey: string = "accessToken";
 
 const AuthContextProvider: React.FC<AuthContextProviderProps> = ( { children } ) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -30,25 +34,53 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ( { children } )
 
         removeToken();
         setIsAuthenticated(false);
+        localStorage.removeItem(usernameStorageItemKey);
     }, [clearTimer]);
 
     const startLogoutTimer = useCallback((expirationTime: number) => {
         const timeUntilExpiration = expirationTime - Date.now();
         
         if (timer.current) {
-            clearTimeout(timer.current);
+            clearTimer();
         }
 
-        timer.current = setTimeout(() => {
-            logout();
+        timer.current = setTimeout(async () => {
+            const { refreshToken } = getToken();
+            const username = localStorage.getItem(usernameStorageItemKey);
+
+            if(refreshToken && username) {
+                const refreshTokenRequest: RefreshTokenRequest = { refreshTokenId: refreshToken, username };
+
+                const response = await fetch(process.env.REACT_APP_CERBERUS_API_AUTH_REFRESH_TOKEN_URL!, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(refreshTokenRequest),
+                })
+
+                if (response.ok) {
+                    const authToken: AuthToken = await response.json();
+                    const expirationTime = getTokenExpiration(authToken.accessToken);
+
+                    if (expirationTime) {
+                        localStorage.setItem(accessTokenStorageItemKey, authToken.accessToken);
+                        startLogoutTimer(expirationTime);
+                    } else {
+                        logout();
+                    }
+                } else {
+                    logout();
+                }
+            } else {
+                logout();
+            }
         }, timeUntilExpiration);
-    }, [logout]);
+    }, [logout, clearTimer]);
 
     useEffect(() => {
-        const [jwtToken, refreshToken] = getToken();
-        const expirationTime = jwtToken && getTokenExpiration(jwtToken);
+        const { accessToken } = getToken();
+        const expirationTime = accessToken && getTokenExpiration(accessToken);
 
-        if (jwtToken && expirationTime && Date.now() < expirationTime) {
+        if (accessToken && expirationTime && Date.now() < expirationTime) {
             setIsAuthenticated(true);
             startLogoutTimer(expirationTime);
         } else {
@@ -66,12 +98,14 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ( { children } )
         saveToken(authToken);
         setIsAuthenticated(true);
 
-        const expirationTime = getTokenExpiration(authToken.jwt);
+        const expirationTime = getTokenExpiration(authToken.accessToken);
 
         if (expirationTime) {
             startLogoutTimer(expirationTime);
+        } else {
+            logout();
         }
-    }, [startLogoutTimer]);
+    }, [startLogoutTimer, logout]);
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, login, logout }}>

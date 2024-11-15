@@ -1,20 +1,20 @@
 import { AuthToken } from "../dtos/AuthToken";
 
-const jwtToken: string = "jwtToken";
-const refreshToken: string = "refreshToken";
+const accessTokenStorageItemKey: string = "accessToken";
+const refreshTokenStorageItemKey: string = "refreshToken";
 
 export function saveToken(authToken: AuthToken) {
-    localStorage.setItem(jwtToken, authToken.jwt);
-    localStorage.setItem(refreshToken, authToken.refreshToken);
+    localStorage.setItem(accessTokenStorageItemKey, authToken.accessToken);
+    localStorage.setItem(refreshTokenStorageItemKey, authToken.refreshToken);
 }
 
 export function getToken() {
-    return [localStorage.getItem(jwtToken), localStorage.getItem(refreshToken)];
+    return { "accessToken": localStorage.getItem(accessTokenStorageItemKey), refreshToken: localStorage.getItem(refreshTokenStorageItemKey) };
 }
 
 export function removeToken() {
-    localStorage.removeItem(jwtToken);
-    localStorage.removeItem(refreshToken);
+    localStorage.removeItem(accessTokenStorageItemKey);
+    localStorage.removeItem(refreshTokenStorageItemKey);
 }
 
 export function getTokenExpiration(token: string) {

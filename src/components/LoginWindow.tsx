@@ -13,14 +13,14 @@ export default function LoginWindow() {
     const [isConfirmPasswordValid, setIsConfirmPasswordValid] = useState(true);
     const [isRegistering, setIsRegistering] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submissionErrorMessage, setSubmissionErrorMessage] = useState("");
+    const [submissionErrorMessage, setSubmissionErrorMessage] = useState<string | null>(null);
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
     const handleOnSubmit = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setIsSubmitting(true);
-        setSubmissionErrorMessage("");
+        setSubmissionErrorMessage(null);
 
         const formData = new FormData(event.currentTarget);
         const entries = Object.fromEntries(formData.entries());
@@ -38,7 +38,9 @@ export default function LoginWindow() {
 
             if (response.ok) {
                 const authToken: AuthToken = await response.json();
+                
                 login(authToken);
+                localStorage.setItem("username", entries.username.toString())
             } else {
                 throw new Error(`${response.statusText}`);
             }
@@ -76,7 +78,7 @@ export default function LoginWindow() {
 
     const toggleWindow = useCallback(() => {
         setIsRegistering((prevState) => !prevState);
-        setSubmissionErrorMessage("");
+        setSubmissionErrorMessage(null);
         setPassword("");
         setConfirmPassword("");
         setIsPasswordValid(true);
@@ -86,8 +88,8 @@ export default function LoginWindow() {
     const renderForm = () => (
         <div className={styles.loginWindow}>
             <form onSubmit={handleOnSubmit}>
-                <label htmlFor="userName">Username</label>
-                <input id="userName" name="userName" required />
+                <label htmlFor="username">Username</label>
+                <input id="username" name="username" required />
 
                 <label htmlFor="password">Password</label>
                 <input
