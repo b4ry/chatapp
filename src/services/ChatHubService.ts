@@ -1,6 +1,10 @@
 import * as signalR from "@microsoft/signalr";
 import * as signalRMsgPack from "@microsoft/signalr-protocol-msgpack";
 
+const onUserJoinsChatEndpointName: string = "UserJoinsChat";
+const onUserLogsOutEndpointName: string = "UserLogsOut";
+const onGetUsersEndpointName: string = "GetUsers";
+
 const connection = new signalR.HubConnectionBuilder()
     .withUrl(process.env.REACT_APP_SOCRATES_API_URL, {
         accessTokenFactory: () => {
@@ -19,7 +23,7 @@ export const startConnection = async (): Promise<void> => {
     try {
         if (connection.state === signalR.HubConnectionState.Disconnected) {
             await connection.start();
-            
+
             console.log("Connected to SignalR");
         }
     } catch (err) {
@@ -41,14 +45,30 @@ export const closeConnection = async (): Promise<void> => {
 
 export const getConnection = () => connection;
 
-export const onUserJoinsChat = (callback: (user: string) => void): void => {
-    connection.on("UserJoinsChat", callback);
+export const onUserJoinsChat = (callback: (joiningUsername: string) => void): void => {
+    connection.on(onUserJoinsChatEndpointName, callback);
 };
+
+export const onUserJoinsChatUnsubscribe = () => {
+    connection.off(onUserJoinsChatEndpointName);
+}
+
+export const onUserLogsOut = (callback: (disconnectingUsername: string) => void): void => {
+    connection.on(onUserLogsOutEndpointName, callback);
+}
+
+export const onUserLogsOutUnsubscribe = () => {
+    connection.off(onUserLogsOutEndpointName);
+}
+
+export const onGetUsers = (callback: (users: string[]) => void): void => {
+    connection.on(onGetUsersEndpointName, callback);
+}
+
+export const onGetUsersUnsubscribe = () => {
+    connection.off(onGetUsersEndpointName);
+}
 
 export const onGetAsymmetricPublicKey = (callback: (publicKey: string) => void): void => {
     connection.on("GetAsymmetricPublicKey", callback);
-};
-
-export const onUserLogsOut = (callback: (user: string) => void): void => {
-    connection.on("UserLogsOut", callback);
 };
