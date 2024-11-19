@@ -1,4 +1,24 @@
 .usersList {
     grid-area: usersList;
     background-color: var(--accent-color);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    font-family: 'Sour Gummy', sans-serif;
+    color: var(--emphasize-color);
+    padding-top: 5px;
+}
+
+.user {
+    background-color: inherit;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
+    font-size: inherit;
+    font-family: inherit;
+    color: inherit;
+    margin-left: 5px;
+    margin-right: auto;
 }
