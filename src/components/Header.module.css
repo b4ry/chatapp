@@ -1,4 +1,31 @@
 .header {
     grid-area: header;
     background-color: var(--emphasize-color);
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.logout {
+    margin-right: 10px;
+    background-color: var(--emphasize-color);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: large;
+    font-family: 'Sour Gummy', sans-serif;
+    color: var(--secondary-color);
+    transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
+}
+
+.logout:hover {
+    background-color: var(--primary-color);
+    color: black;
+}
+
+.logout:disabled {
+    background-color: var(--primary-color);
+    color: black;
+    cursor: not-allowed;
+    opacity: 0.6;
 }
