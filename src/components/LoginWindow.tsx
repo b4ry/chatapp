@@ -87,12 +87,13 @@ export default function LoginWindow() {
 
     const renderForm = () => (
         <div className={styles.loginWindow}>
-            <form onSubmit={handleOnSubmit}>
-                <label htmlFor="username">Username</label>
-                <input id="username" name="username" required />
+            <form className={styles.form} onSubmit={handleOnSubmit}>
+                <label className={styles.label} htmlFor="username">Username</label>
+                <input className={styles.input} id="username" name="username" required />
 
-                <label htmlFor="password">Password</label>
+                <label className={styles.label} htmlFor="password">Password</label>
                 <input
+                    className={styles.input}
                     type="password"
                     id="password"
                     name="password"
@@ -108,8 +109,9 @@ export default function LoginWindow() {
 
                 {isRegistering && (
                     <>
-                        <label htmlFor="confirmPassword">Confirm password</label>
+                        <label className={styles.label} htmlFor="confirmPassword">Confirm password</label>
                         <input
+                            className={styles.input}
                             type="password"
                             id="confirmPassword"
                             name="confirmPassword"
@@ -125,10 +127,10 @@ export default function LoginWindow() {
                     </>
                 )}
 
-                <button type="submit" disabled={isSubmitting}>
+                <button className={styles.button} type="submit" disabled={isSubmitting}>
                     {isSubmitting ? (isRegistering ? "...registering" : "...logging in") : isRegistering ? "Register" : "Log in"}
                 </button>
-                <p onClick={toggleWindow}>
+                <p className={styles.p} onClick={toggleWindow}>
                     {isRegistering ? "back to login!" : "or register!"}
                 </p>
             </form>
