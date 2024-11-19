@@ -3,19 +3,22 @@
     background-color: var(--emphasize-color);
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
+    font-size: large;
+    font-family: 'Sour Gummy', sans-serif;
+    color: var(--secondary-color);
 }
 
 .logout {
+    margin-left: auto;
     margin-right: 10px;
     background-color: var(--emphasize-color);
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    font-size: large;
-    font-family: 'Sour Gummy', sans-serif;
-    color: var(--secondary-color);
     transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
+    font-size: inherit;
+    font-family: inherit;
+    color: inherit;
 }
 
 .logout:hover {
@@ -28,4 +31,9 @@
     color: black;
     cursor: not-allowed;
     opacity: 0.6;
+}
+
+.p {
+    margin-left: 10px;
+    cursor: default;
 }
