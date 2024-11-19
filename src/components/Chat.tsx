@@ -12,7 +12,7 @@ export default function Chat() {
 
         return () => {
             const cleanup = async () => await closeConnection();
-            
+
             cleanup();
         };
     }, []);
