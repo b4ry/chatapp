@@ -19,6 +19,7 @@
     font-size: inherit;
     font-family: inherit;
     color: inherit;
-    margin-left: 5px;
-    margin-right: auto;
+    width: 100%;
+    text-align: left;
+    padding-left: 10px;
 }

@@ -1,4 +1,9 @@
 .usersListHeader {
     grid-area: usersListHeader;
     background-color: gainsboro;
+    font-family: 'Sour Gummy', sans-serif;
+    cursor: default;
+    display: flexbox;
+    flex-direction: column;
+    padding-left: 10px;
 }

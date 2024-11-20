@@ -7,13 +7,13 @@ import { onGetUsers, onGetUsersUnsubscribe, onUserJoinsChat, onUserJoinsChatUnsu
 import { User } from "./User";
 
 export default function UsersListSection() {
-    const [currentUsers, setCurrentUsers] = useState<User[]>([]);
+    const [currentUsers, setCurrentUsers] = useState<User[]>([ { username: "Server" }]);
 
     useEffect(() => {
         onGetUsers((users: string[]) => {
             const mappedUsers = users.map(username => ({ username } as User));
             
-            setCurrentUsers([ ...mappedUsers ]);
+            setCurrentUsers(prev => [ ...prev, ...mappedUsers ]);
         });
 
         onUserJoinsChat((joininUsername: string) => {
