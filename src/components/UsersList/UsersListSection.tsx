@@ -13,9 +13,8 @@ export default function UsersListSection() {
     useEffect(() => {
         onGetUsers((users: string[]) => {
             const mappedUsers = users.map(username => ({ username } as User));
-            
+        
             setCurrentUsers(prev => [ ...prev, ...mappedUsers ]);
-            setFilteredUsers(prev => [ ...prev, ...mappedUsers ]);
         });
 
         onUserJoinsChat((joininUsername: string) => {
