@@ -8,12 +8,14 @@ import { User } from "./User";
 
 export default function UsersListSection() {
     const [currentUsers, setCurrentUsers] = useState<User[]>([ { username: "Server" }]);
+    const [filteredUsers, setFilteredUsers] = useState<User[]>([ { username: "Server" }]);
 
     useEffect(() => {
         onGetUsers((users: string[]) => {
             const mappedUsers = users.map(username => ({ username } as User));
             
             setCurrentUsers(prev => [ ...prev, ...mappedUsers ]);
+            setFilteredUsers(prev => [ ...prev, ...mappedUsers ]);
         });
 
         onUserJoinsChat((joininUsername: string) => {
@@ -33,8 +35,8 @@ export default function UsersListSection() {
 
     return (
         <section className={styles.usersList}>
-            <UsersListHeader />
-            <UsersList users={currentUsers}/>
+            <UsersListHeader users={currentUsers} onFilterUsers={setFilteredUsers}/>
+            <UsersList users={filteredUsers}/>
         </section>
     )
 }
