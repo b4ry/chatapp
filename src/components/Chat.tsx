@@ -4,40 +4,48 @@ import ChatWindowSection from "./ChatWindow/ChatWindowSection";
 import UsersListSection from "./UsersList/UsersListSection";
 import { closeConnection, invokeStoreSymmetricKey, onGetAsymmetricPublicKey, onGetAsymmetricPublicKeyUnsubscribe, startConnection } from "../services/ChatHubService";
 import { parseRSAKey } from "../services/RSAService";
-import { generateAESKey } from "../services/AESService";
-import forge from "node-forge";
+import { generateAESKey, storeAesKey } from "../services/AESService";
+import { useAuth } from "../stores/AuthContext";
 
-function storeAesKey(encryptedAesKey: string, encryptedAesIV: string) {
-    const encryptedAesKeyBase64 = forge.util.encode64(encryptedAesKey);
-    const encryptedAesIVBase64 = forge.util.encode64(encryptedAesIV);
+async function sendSymmetricKey(key: string, ivBytes: Uint8Array, rsaPublicKey: string) {
+    const rsa = parseRSAKey(rsaPublicKey);
 
-    const username = localStorage.getItem("username");
+    const aesIVBinary = String.fromCharCode.apply(null, ivBytes as unknown as number[]);
 
-    localStorage.setItem(`${username}_AesKey`, encryptedAesKeyBase64);
-    localStorage.setItem(`${username}_AesIV`, encryptedAesIVBase64);
+    const encryptedAesKey = rsa.encrypt(key);
+    const encryptedAesIV = rsa.encrypt(aesIVBinary);
+    const encryptedAesKeyBytes = Uint8Array.from(encryptedAesKey, c => c.charCodeAt(0));
+    const encryptedAesIVBytes = Uint8Array.from(encryptedAesIV, c => c.charCodeAt(0));
+
+    await invokeStoreSymmetricKey([encryptedAesKeyBytes, encryptedAesIVBytes]);
 }
 
 export default function Chat() {
+    const { logout } = useAuth();
+
     useEffect(() => {
         const initConnection = async () => await startConnection();
 
         initConnection();
 
-        onGetAsymmetricPublicKey(async (publicKey: string) => {
-            const rsa = parseRSAKey(publicKey);
+        const username = localStorage.getItem("username");
 
-            var { aesKeyBinary, aesIVBinary } = await generateAESKey();
+        if(username) {
+            const aesKey = localStorage.getItem(`${username}_AesKey`);
 
-            const encryptedAesKey = rsa.encrypt(aesKeyBinary);
-            const encryptedAesIV = rsa.encrypt(aesIVBinary);
-            
-            storeAesKey(encryptedAesKey, encryptedAesIV);
+            if(!aesKey) {
+                onGetAsymmetricPublicKey(async (publicKey: string) => {
+                    const { keyBytes, ivBytes } = await generateAESKey();
 
-            const encryptedAesKeyBytes = Uint8Array.from(encryptedAesKey, c => c.charCodeAt(0));
-            const encryptedAesIVBytes = Uint8Array.from(encryptedAesIV, c => c.charCodeAt(0));
+                    const aesKeyBinary = String.fromCharCode.apply(null, keyBytes as unknown as number[]);
 
-            await invokeStoreSymmetricKey([encryptedAesKeyBytes, encryptedAesIVBytes]);
-        });
+                    storeAesKey(username, aesKeyBinary, ivBytes);
+                    await sendSymmetricKey(aesKeyBinary, ivBytes, publicKey);
+                });
+            }
+        } else {
+            logout();
+        }
 
         return () => {
             const cleanup = async () => {
