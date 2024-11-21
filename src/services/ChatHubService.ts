@@ -4,6 +4,7 @@ import * as signalRMsgPack from "@microsoft/signalr-protocol-msgpack";
 const onUserJoinsChatEndpointName: string = "UserJoinsChat";
 const onUserLogsOutEndpointName: string = "UserLogsOut";
 const onGetUsersEndpointName: string = "GetUsers";
+const onGetAsymmetricPublicKeyName: string = "GetAsymmetricPublicKey";
 
 const connection = new signalR.HubConnectionBuilder()
     .withUrl(process.env.REACT_APP_SOCRATES_API_URL, {
@@ -70,5 +71,9 @@ export const onGetUsersUnsubscribe = () => {
 }
 
 export const onGetAsymmetricPublicKey = (callback: (publicKey: string) => void): void => {
-    connection.on("GetAsymmetricPublicKey", callback);
+    connection.on(onGetAsymmetricPublicKeyName, callback);
 };
+
+export const onGetAsymmetricPublicKeyUnsubscribe = () => {
+    connection.off(onGetAsymmetricPublicKeyName);
+}
