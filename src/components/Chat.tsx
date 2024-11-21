@@ -7,6 +7,16 @@ import { parseRSAKey } from "../services/RSAService";
 import { generateAESKey } from "../services/AESService";
 import forge from "node-forge";
 
+function storeAesKey(encryptedAesKey: string, encryptedAesIV: string) {
+    const encryptedAesKeyBase64 = forge.util.encode64(encryptedAesKey);
+    const encryptedAesIVBase64 = forge.util.encode64(encryptedAesIV);
+
+    const username = localStorage.getItem("username");
+
+    localStorage.setItem(`${username}_AesKey`, encryptedAesKeyBase64);
+    localStorage.setItem(`${username}_AesIV`, encryptedAesIVBase64);
+}
+
 export default function Chat() {
     useEffect(() => {
         const initConnection = async () => await startConnection();
@@ -16,21 +26,12 @@ export default function Chat() {
         onGetAsymmetricPublicKey(async (publicKey: string) => {
             const rsa = parseRSAKey(publicKey);
 
-            var { keyBytes: aesKey, iv: aesIV } = await generateAESKey();
+            var { aesKeyBinary, aesIVBinary } = await generateAESKey();
 
-            const aesKeyBinary = String.fromCharCode.apply(null, aesKey as unknown as number[]);
-            const aesIVBinary = String.fromCharCode.apply(null, aesIV as unknown as number[]);
-            
             const encryptedAesKey = rsa.encrypt(aesKeyBinary);
             const encryptedAesIV = rsa.encrypt(aesIVBinary);
             
-            // Encode the encrypted data as Base64
-            const encryptedAesKeyBase64 = forge.util.encode64(encryptedAesKey);
-            const encryptedAesIVBase64 = forge.util.encode64(encryptedAesIV);
-            
-            // Store encrypted AES key and IV in localStorage
-            localStorage.setItem("encryptedAesKey", encryptedAesKeyBase64);
-            localStorage.setItem("encryptedAesIV", encryptedAesIVBase64);
+            storeAesKey(encryptedAesKey, encryptedAesIV);
 
             const encryptedAesKeyBytes = Uint8Array.from(encryptedAesKey, c => c.charCodeAt(0));
             const encryptedAesIVBytes = Uint8Array.from(encryptedAesIV, c => c.charCodeAt(0));
