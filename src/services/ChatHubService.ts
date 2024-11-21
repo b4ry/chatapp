@@ -1,10 +1,16 @@
 import * as signalR from "@microsoft/signalr";
 import * as signalRMsgPack from "@microsoft/signalr-protocol-msgpack";
 
-const onUserJoinsChatEndpointName: string = "UserJoinsChat";
-const onUserLogsOutEndpointName: string = "UserLogsOut";
-const onGetUsersEndpointName: string = "GetUsers";
-const onGetAsymmetricPublicKeyName: string = "GetAsymmetricPublicKey";
+enum ListenerMethodNames {
+    UserJoinsChat = "UserJoinsChat",
+    UserLogsOut = "UserLogsOut",
+    GetUsers = "GetUsers",
+    GetAsymmetricPublicKey = "GetAsymmetricPublicKey"
+}
+
+enum ChatHubEndpointNames {
+    StoreSymmetricKey = "StoreSymmetricKey"
+}
 
 const connection = new signalR.HubConnectionBuilder()
     .withUrl(process.env.REACT_APP_SOCRATES_API_URL, {
@@ -47,33 +53,37 @@ export const closeConnection = async (): Promise<void> => {
 export const getConnection = () => connection;
 
 export const onUserJoinsChat = (callback: (joiningUsername: string) => void): void => {
-    connection.on(onUserJoinsChatEndpointName, callback);
+    connection.on(ListenerMethodNames.UserJoinsChat, callback);
 };
 
 export const onUserJoinsChatUnsubscribe = () => {
-    connection.off(onUserJoinsChatEndpointName);
+    connection.off(ListenerMethodNames.UserJoinsChat);
 }
 
 export const onUserLogsOut = (callback: (disconnectingUsername: string) => void): void => {
-    connection.on(onUserLogsOutEndpointName, callback);
+    connection.on(ListenerMethodNames.UserLogsOut, callback);
 }
 
 export const onUserLogsOutUnsubscribe = () => {
-    connection.off(onUserLogsOutEndpointName);
+    connection.off(ListenerMethodNames.UserLogsOut);
 }
 
 export const onGetUsers = (callback: (users: string[]) => void): void => {
-    connection.on(onGetUsersEndpointName, callback);
+    connection.on(ListenerMethodNames.GetUsers, callback);
 }
 
 export const onGetUsersUnsubscribe = () => {
-    connection.off(onGetUsersEndpointName);
+    connection.off(ListenerMethodNames.GetUsers);
 }
 
 export const onGetAsymmetricPublicKey = (callback: (publicKey: string) => void): void => {
-    connection.on(onGetAsymmetricPublicKeyName, callback);
+    connection.on(ListenerMethodNames.GetAsymmetricPublicKey, callback);
 };
 
 export const onGetAsymmetricPublicKeyUnsubscribe = () => {
-    connection.off(onGetAsymmetricPublicKeyName);
+    connection.off(ListenerMethodNames.GetAsymmetricPublicKey);
+}
+
+export const invokeStoreSymmetricKey = async (encryptedAes: Uint8Array[]) => {
+    await connection.invoke(ChatHubEndpointNames.StoreSymmetricKey, encryptedAes);
 }
