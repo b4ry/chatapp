@@ -70,7 +70,7 @@ export default class AESService {
         );
     }
 
-    async encryptString(plainText: string): Promise<string> {
+    async encryptWithPasswordKey(plainText: string): Promise<string> {
         const enc = new TextEncoder();
         const encryptedText = await crypto.subtle.encrypt(
             {
@@ -86,7 +86,7 @@ export default class AESService {
         return String.fromCharCode.apply(null, encryptedTextBytes as unknown as number[]);
     };
 
-    async decryptString(encryptedString: string): Promise<string> {
+    async decryptWithPasswordKey(encryptedString: string): Promise<string> {
         // Convert the encrypted string back to Uint8Array
         const encryptedTextBytes = new Uint8Array(encryptedString.split('').map(char => char.charCodeAt(0)));
         
@@ -105,6 +105,37 @@ export default class AESService {
         return dec.decode(decryptedText);
     }
 
+    async decryptMessage(message: string): Promise<string> {
+        // Convert the encrypted string back to Uint8Array
+        const encryptedTextBytes = this.base64ToUint8Array(message);
+        
+        // Decrypt the Uint8Array using the same key and IV
+        const decryptedText = await crypto.subtle.decrypt(
+            {
+                name: 'AES-CBC',
+                iv: this.aesIV
+            },
+            this.aesKey!,
+            encryptedTextBytes
+        );
+        
+        const dec = new TextDecoder();
+
+        return dec.decode(decryptedText);
+    }
+
+    private base64ToUint8Array(base64String: string): Uint8Array {
+        const binaryString = atob(base64String);
+        const length = binaryString.length;
+        const bytes = new Uint8Array(length);
+        
+        for (let i = 0; i < length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        
+        return bytes;
+    }
+
     async storeAesKey(username: string) {
         const rawKey = await window.crypto.subtle.exportKey("raw", this.aesKey!);
         const keyBytes = new Uint8Array(rawKey);
@@ -112,7 +143,7 @@ export default class AESService {
         const aesKeyBinary = String.fromCharCode.apply(null, keyBytes as unknown as number[]);
         const aesIVBinary = String.fromCharCode.apply(null, this.aesIV as unknown as number[]);
 
-        const encryptedKey = await this.encryptString(aesKeyBinary);
+        const encryptedKey = await this.encryptWithPasswordKey(aesKeyBinary);
 
         localStorage.setItem(`${username}_AesKey`, encryptedKey);
         localStorage.setItem(`${username}_AesIV`, aesIVBinary);
@@ -123,7 +154,7 @@ export default class AESService {
         this.aesIV = new Uint8Array(iv.split('').map(char => char.charCodeAt(0)));
 
         const aesKey = localStorage.getItem(`${username}_AesKey`);
-        const decryptedAesKey = await this.decryptString(aesKey!);
+        const decryptedAesKey = await this.decryptWithPasswordKey(aesKey!);
         const decryptedAesKeyBytes = new Uint8Array(decryptedAesKey.split('').map(char => char.charCodeAt(0)));
         this.aesKey = await window.crypto.subtle.importKey("raw", decryptedAesKeyBytes, { name: "AES-CBC", length: 256 }, true, ["encrypt", "decrypt"]);
     }

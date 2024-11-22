@@ -5,7 +5,8 @@ enum ListenerMethodNames {
     UserJoinsChat = "UserJoinsChat",
     UserLogsOut = "UserLogsOut",
     GetUsers = "GetUsers",
-    GetAsymmetricPublicKey = "GetAsymmetricPublicKey"
+    GetAsymmetricPublicKey = "GetAsymmetricPublicKey",
+    ReceiveMessage = "ReceiveMessage"
 }
 
 enum ChatHubEndpointNames {
@@ -82,6 +83,14 @@ export const onGetAsymmetricPublicKey = (callback: (publicKey: string) => void):
 
 export const onGetAsymmetricPublicKeyUnsubscribe = () => {
     connection.off(ListenerMethodNames.GetAsymmetricPublicKey);
+}
+
+export const onReceiveMessage = (callback: (username: string, message: string) => void): void => {
+    connection.on(ListenerMethodNames.ReceiveMessage, callback);
+}
+
+export const onReceiveMessageUnsubscribe = () => {
+    connection.off(ListenerMethodNames.ReceiveMessage);
 }
 
 export const invokeStoreSymmetricKey = async (encryptedAes: Uint8Array[]) => {
