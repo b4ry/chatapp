@@ -87,10 +87,7 @@ export default class AESService {
     };
 
     async decryptWithPasswordKey(encryptedString: string): Promise<string> {
-        // Convert the encrypted string back to Uint8Array
         const encryptedTextBytes = new Uint8Array(encryptedString.split('').map(char => char.charCodeAt(0)));
-        
-        // Decrypt the Uint8Array using the same key and IV
         const decryptedText = await crypto.subtle.decrypt(
             {
                 name: 'AES-GCM',
@@ -106,10 +103,7 @@ export default class AESService {
     }
 
     async decryptMessage(message: string): Promise<string> {
-        // Convert the encrypted string back to Uint8Array
         const encryptedTextBytes = this.base64ToUint8Array(message);
-        
-        // Decrypt the Uint8Array using the same key and IV
         const decryptedText = await crypto.subtle.decrypt(
             {
                 name: 'AES-CBC',
