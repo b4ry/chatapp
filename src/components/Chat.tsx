@@ -7,12 +7,13 @@ import { parseRSAKey } from "../services/RSAService";
 import { generateAESKey, storeAesKey } from "../services/AESService";
 import { useAuth } from "../stores/AuthContext";
 
-async function sendSymmetricKey(key: string, ivBytes: Uint8Array, rsaPublicKey: string) {
+async function sendSymmetricKey(keyBytes: Uint8Array, ivBytes: Uint8Array, rsaPublicKey: string) {
     const rsa = parseRSAKey(rsaPublicKey);
 
     const aesIVBinary = String.fromCharCode.apply(null, ivBytes as unknown as number[]);
+    const aesKeyBinary = String.fromCharCode.apply(null, keyBytes as unknown as number[]);
 
-    const encryptedAesKey = rsa.encrypt(key);
+    const encryptedAesKey = rsa.encrypt(aesKeyBinary);
     const encryptedAesIV = rsa.encrypt(aesIVBinary);
     const encryptedAesKeyBytes = Uint8Array.from(encryptedAesKey, c => c.charCodeAt(0));
     const encryptedAesIVBytes = Uint8Array.from(encryptedAesIV, c => c.charCodeAt(0));
@@ -37,10 +38,8 @@ export default function Chat() {
                 onGetAsymmetricPublicKey(async (publicKey: string) => {
                     const { keyBytes, ivBytes } = await generateAESKey();
 
-                    const aesKeyBinary = String.fromCharCode.apply(null, keyBytes as unknown as number[]);
-
-                    storeAesKey(username, aesKeyBinary, ivBytes);
-                    await sendSymmetricKey(aesKeyBinary, ivBytes, publicKey);
+                    storeAesKey(username, keyBytes, ivBytes);
+                    await sendSymmetricKey(keyBytes, ivBytes, publicKey);
                 });
             }
         } else {

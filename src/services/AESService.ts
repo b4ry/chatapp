@@ -72,10 +72,12 @@ export async function encryptString(password: string, ivBytes: Uint8Array, plain
     return String.fromCharCode.apply(null, encryptedTextBytes as unknown as number[]);
 };
 
-export async function storeAesKey(username: string, key: string, ivBytes: Uint8Array) {
-    const encryptedKey = await encryptString("Test123!", ivBytes, key);
+export async function storeAesKey(username: string, keyBytes: Uint8Array, ivBytes: Uint8Array) {
+    const aesKeyBinary = String.fromCharCode.apply(null, keyBytes as unknown as number[]);
     const aesIVBinary = String.fromCharCode.apply(null, ivBytes as unknown as number[]);
 
+    const encryptedKey = await encryptString("Test123!", ivBytes, aesKeyBinary);
+    
     localStorage.setItem(`${username}_AesKey`, encryptedKey);
     localStorage.setItem(`${username}_AesIV`, aesIVBinary);
 }
