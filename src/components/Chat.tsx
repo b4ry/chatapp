@@ -1,50 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import styles from "./Chat.module.css";
 import ChatWindowSection from "./ChatWindow/ChatWindowSection";
 import UsersListSection from "./UsersList/UsersListSection";
-import { closeConnection, invokeStoreSymmetricKey, onGetAsymmetricPublicKey, onGetAsymmetricPublicKeyUnsubscribe, startConnection } from "../services/ChatHubService";
-import { parseRSAKey } from "../services/RSAService";
-import { generateAESKey, storeAesKey } from "../services/AESService";
-import { useAuth } from "../stores/AuthContext";
-
-async function sendSymmetricKey(keyBytes: Uint8Array, ivBytes: Uint8Array, rsaPublicKey: string) {
-    const rsa = parseRSAKey(rsaPublicKey);
-
-    const aesIVBinary = String.fromCharCode.apply(null, ivBytes as unknown as number[]);
-    const aesKeyBinary = String.fromCharCode.apply(null, keyBytes as unknown as number[]);
-
-    const encryptedAesKey = rsa.encrypt(aesKeyBinary);
-    const encryptedAesIV = rsa.encrypt(aesIVBinary);
-    const encryptedAesKeyBytes = Uint8Array.from(encryptedAesKey, c => c.charCodeAt(0));
-    const encryptedAesIVBytes = Uint8Array.from(encryptedAesIV, c => c.charCodeAt(0));
-
-    await invokeStoreSymmetricKey([encryptedAesKeyBytes, encryptedAesIVBytes]);
-}
+import { closeConnection, onGetAsymmetricPublicKey, onGetAsymmetricPublicKeyUnsubscribe, startConnection } from "../services/ChatHubService";
+import AESService from "../services/AESService";
 
 export default function Chat() {
-    const { logout } = useAuth();
-
+    const aesService = useRef<AESService | null>(null);
+    
     useEffect(() => {
         const initConnection = async () => await startConnection();
 
         initConnection();
 
-        const username = localStorage.getItem("username");
-
-        if(username) {
-            const aesKey = localStorage.getItem(`${username}_AesKey`);
-
-            if(!aesKey) {
-                onGetAsymmetricPublicKey(async (publicKey: string) => {
-                    const { keyBytes, ivBytes } = await generateAESKey();
-
-                    storeAesKey(username, keyBytes, ivBytes);
-                    await sendSymmetricKey(keyBytes, ivBytes, publicKey);
-                });
-            }
-        } else {
-            logout();
-        }
+        onGetAsymmetricPublicKey(async (publicKey: string) => {
+            aesService.current = new AESService("Test123!", publicKey);
+        });
 
         return () => {
             const cleanup = async () => {
