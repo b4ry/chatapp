@@ -163,9 +163,9 @@ export default class AESService {
     
         const encryptedAesKey = rsa.encrypt(aesKeyBinary);
         const encryptedAesIV = rsa.encrypt(aesIVBinary);
-        const encryptedAesKeyBytes = Uint8Array.from(encryptedAesKey, c => c.charCodeAt(0));
-        const encryptedAesIVBytes = Uint8Array.from(encryptedAesIV, c => c.charCodeAt(0));
+        const encryptedAesKeyBase64 = btoa(encryptedAesKey);
+        const encryptedAesIVBase64 = btoa(encryptedAesIV);
     
-        await invokeStoreSymmetricKey([encryptedAesKeyBytes, encryptedAesIVBytes]);
+        await invokeStoreSymmetricKey([encryptedAesKeyBase64, encryptedAesIVBase64]);
     }
 }
