@@ -158,11 +158,15 @@ export default class AESService {
     
         const rawKey = await window.crypto.subtle.exportKey("raw", this.aesKey!);
         const keyBytes = new Uint8Array(rawKey);
+
+        // to binary string
         const aesIVBinary = String.fromCharCode.apply(null, this.aesIV as unknown as number[]);
         const aesKeyBinary = String.fromCharCode.apply(null, keyBytes as unknown as number[]);
     
         const encryptedAesKey = rsa.encrypt(aesKeyBinary);
         const encryptedAesIV = rsa.encrypt(aesIVBinary);
+
+        // to base64
         const encryptedAesKeyBase64 = btoa(encryptedAesKey);
         const encryptedAesIVBase64 = btoa(encryptedAesIV);
     
