@@ -93,6 +93,6 @@ export const onReceiveMessageUnsubscribe = () => {
     connection.off(ListenerMethodNames.ReceiveMessage);
 }
 
-export const invokeStoreSymmetricKey = async (encryptedAes: string[]) => {
+export const invokeStoreSymmetricKey = async (encryptedAes: [string, string]) => {
     await connection.invoke(ChatHubEndpointNames.StoreSymmetricKey, encryptedAes);
 }

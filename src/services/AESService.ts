@@ -139,15 +139,15 @@ export default class AESService {
 
         const encryptedKey = await this.encryptWithPasswordKey(aesKeyBinary);
 
-        localStorage.setItem(`${username}_AesKey`, encryptedKey);
-        localStorage.setItem(`${username}_AesIV`, aesIVBinary);
+        localStorage.setItem(`${username}_AesKey`, btoa(encryptedKey));
+        localStorage.setItem(`${username}_AesIV`, btoa(aesIVBinary));
     }
 
     async getAesKey(username: string) {
-        const iv = localStorage.getItem(`${username}_AesIV`)!;
+        const iv = atob(localStorage.getItem(`${username}_AesIV`)!);
         this.aesIV = new Uint8Array(iv.split('').map(char => char.charCodeAt(0)));
 
-        const aesKey = localStorage.getItem(`${username}_AesKey`);
+        const aesKey = atob(localStorage.getItem(`${username}_AesKey`)!);
         const decryptedAesKey = await this.decryptWithPasswordKey(aesKey!);
         const decryptedAesKeyBytes = new Uint8Array(decryptedAesKey.split('').map(char => char.charCodeAt(0)));
         this.aesKey = await window.crypto.subtle.importKey("raw", decryptedAesKeyBytes, { name: "AES-CBC", length: 256 }, true, ["encrypt", "decrypt"]);
