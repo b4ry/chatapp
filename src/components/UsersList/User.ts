@@ -1,4 +1,3 @@
-export type Channel = {
+export type User = {
     username: string;
-    isActive: boolean;
 }

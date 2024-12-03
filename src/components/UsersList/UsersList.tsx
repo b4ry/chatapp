@@ -1,14 +1,11 @@
 import { useState } from "react";
-import { Channel } from "./User";
+import { User } from "./User";
 import styles from "./UsersList.module.css";
 
-export default function UsersList({ users } : { users: Channel[] }) {
-    const [activeUser, setActiveUser] = useState( users.find(user => user.isActive));
+export default function UsersList({ users } : { users: User[] }) {
+    const [activeUser, setActiveUser] = useState( users.find(user => user.username === "Server"));
 
-    function handleOnClick(user: Channel) {
-        activeUser!.isActive = false;
-        user.isActive = true;
-
+    function handleOnClick(user: User) {
         setActiveUser(user);
     }
 
@@ -17,7 +14,7 @@ export default function UsersList({ users } : { users: Channel[] }) {
             { users.map(user =>
                 <button
                     key={user.username}
-                    className={`${styles.user} ${user.isActive ? styles.isActive : ''}`}
+                    className={`${styles.user} ${user.username === activeUser?.username ? styles.isActive : ''}`}
                     onClick={() => handleOnClick(user)}>
                     {user.username}
                 </button>
