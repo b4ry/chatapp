@@ -4,21 +4,21 @@ import UsersListHeader from "./UsersListHeader";
 import UsersList from "./UsersList";
 import { useEffect, useState } from "react";
 import { onGetUsers, onGetUsersUnsubscribe, onUserJoinsChat, onUserJoinsChatUnsubscribe, onUserLogsOut, onUserLogsOutUnsubscribe } from "../../services/ChatHubService";
-import { User } from "./User";
+import { Channel } from "./User";
 
 export default function UsersListSection() {
-    const [currentUsers, setCurrentUsers] = useState<User[]>([ { username: "Server" }]);
-    const [filteredUsers, setFilteredUsers] = useState<User[]>([ { username: "Server" }]);
+    const [currentUsers, setCurrentUsers] = useState<Channel[]>([ { username: "Server", isActive: true }, { username: "Dummy", isActive: false }]);
+    const [filteredUsers, setFilteredUsers] = useState<Channel[]>([ { username: "Server", isActive: true }, { username: "Dummy", isActive: false }]);
 
     useEffect(() => {
         onGetUsers((users: string[]) => {
-            const mappedUsers = users.map(username => ({ username } as User));
+            const mappedUsers = users.map(username => ({ username } as Channel));
         
             setCurrentUsers(prev => [ ...prev, ...mappedUsers ]);
         });
 
         onUserJoinsChat((joininUsername: string) => {
-            setCurrentUsers(prev => [ ...prev, { username: joininUsername } as User ]);
+            setCurrentUsers(prev => [ ...prev, { username: joininUsername } as Channel ]);
         });
 
         onUserLogsOut((disconnectingUsername: string) => {
