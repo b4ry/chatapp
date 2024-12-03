@@ -4,6 +4,7 @@ import ChatWindowSection from "./ChatWindow/ChatWindowSection";
 import UsersListSection from "./UsersList/UsersListSection";
 import { closeConnection, onGetAsymmetricPublicKey, onGetAsymmetricPublicKeyUnsubscribe, onReceiveMessage, onReceiveMessageUnsubscribe, startConnection } from "../services/ChatHubService";
 import AESService from "../services/AESService";
+import ChatMessagesContextProvider from "../stores/ChatMessagesContext";
 
 export default function Chat() {
     const aesService = useRef<AESService | null>(null);
@@ -35,9 +36,11 @@ export default function Chat() {
     }, []);
     
     return (
-        <div className={styles.chat}>
-            <ChatWindowSection />
-            <UsersListSection />
-        </div>
+        <ChatMessagesContextProvider>
+            <div className={styles.chat}>
+                <ChatWindowSection />
+                <UsersListSection />
+            </div>
+        </ChatMessagesContextProvider>
     );
 }

@@ -1,12 +1,12 @@
-import { useState } from "react";
 import { User } from "./User";
 import styles from "./UsersList.module.css";
+import { useChatMessagesContext } from "../../stores/ChatMessagesContext";
 
 export default function UsersList({ users } : { users: User[] }) {
-    const [activeUser, setActiveUser] = useState( users.find(user => user.username === "Server"));
+    const { currentChatUser, setCurrentChatUser } = useChatMessagesContext();
 
     function handleOnClick(user: User) {
-        setActiveUser(user);
+        setCurrentChatUser(user.username);
     }
 
     return (
@@ -14,7 +14,7 @@ export default function UsersList({ users } : { users: User[] }) {
             { users.map(user =>
                 <button
                     key={user.username}
-                    className={`${styles.user} ${user.username === activeUser?.username ? styles.isActive : ''}`}
+                    className={`${styles.user} ${user.username === currentChatUser ? styles.isActive : ''}`}
                     onClick={() => handleOnClick(user)}>
                     {user.username}
                 </button>
