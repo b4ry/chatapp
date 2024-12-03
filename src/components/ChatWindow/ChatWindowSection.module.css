@@ -6,4 +6,5 @@
         "currentChatHeader"
         "currentChatWindow"
         "currentChatSendMessage";
+    overflow-y: hidden;
 }

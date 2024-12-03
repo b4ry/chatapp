@@ -1,4 +1,30 @@
 .currentChatWindow {
     grid-area: currentChatWindow;
     background-color: var(--primary-color);
+    font-family: 'Sour Gummy', sans-serif;
+    padding: 20px 0px 20px 0px;
+    overflow-y: scroll;
+}
+
+.message {
+    clear: both;
+    padding: 10px;
+    margin-top: 5px;
+    min-height: 20px;
+    min-width: 20px;
+    border: 1px solid var(--emphasize-color);
+    background-color: rgb(240, 240, 240);
+    border-radius: 10px;
+}
+
+.userMessage {
+    float: left;
+    margin-left: 5%;
+    border-radius: 0px 10px 10px 10px;
+}
+
+.externalMessage {
+    float: right;
+    margin-right: 5%;
+    border-radius: 10px 0px 10px 10px;
 }

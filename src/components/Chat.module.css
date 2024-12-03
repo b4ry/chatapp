@@ -3,4 +3,5 @@
     display: grid;
     grid-template-columns: 85fr 15fr;
     grid-template-areas: "chatWindowSection usersListSection";
+    overflow: hidden;
 }
