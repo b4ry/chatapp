@@ -1,4 +1,6 @@
 .currentChatHeader {
     grid-area: currentChatHeader;
     background-color: var(--secondary-color);
+    font-family: 'Sour Gummy', sans-serif;
+    padding-left: 10px;
 }
