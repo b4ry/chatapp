@@ -1,4 +1,5 @@
 export type Message = {
-    sender: string;
+    username: string;
     message: string;
+    order: number;
 }

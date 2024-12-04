@@ -7,8 +7,8 @@ import { onGetUsers, onGetUsersUnsubscribe, onUserJoinsChat, onUserJoinsChatUnsu
 import { User } from "./User";
 
 export default function UsersListSection() {
-    const [currentUsers, setCurrentUsers] = useState<User[]>([ { username: "Server" }, { username: "Dummy" }]);
-    const [filteredUsers, setFilteredUsers] = useState<User[]>([ { username: "Server" }, { username: "Dummy" }]);
+    const [currentUsers, setCurrentUsers] = useState<User[]>([ { username: "Server" }]);
+    const [filteredUsers, setFilteredUsers] = useState<User[]>([ { username: "Server" }]);
 
     useEffect(() => {
         onGetUsers((users: string[]) => {
