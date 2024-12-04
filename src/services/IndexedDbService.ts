@@ -1,9 +1,9 @@
-import { openDB, IDBPDatabase } from 'idb';
-import { Message } from '../dtos/Message';
+import { openDB, IDBPDatabase } from "idb";
+import { Message } from "../dtos/Message";
 
-const DATABASE_NAME = 'ChatMessages';
-const STORE_NAME = 'ChatMessages';
-const INDEX_NAME = 'usernameIndex';
+const DATABASE_NAME = "ChatMessages";
+const STORE_NAME = "ChatMessages";
+const INDEX_NAME = "usernameIndex";
 
 let db: IDBPDatabase | null = null;
 
@@ -12,11 +12,11 @@ export const initDB = async () => {
       upgrade(database) {
             database.deleteObjectStore(STORE_NAME);
             const store = database.createObjectStore(STORE_NAME, { autoIncrement: true });
-            store.createIndex(INDEX_NAME, 'username', { unique: false });
+            store.createIndex(INDEX_NAME, "username", { unique: false });
       },
     });
   
-    console.log('Database connection open.');
+    console.log("Database connection open.");
   };
 
 export const addMessage = async (message: Message) => {
@@ -28,7 +28,7 @@ export const getMessages = async (): Promise<Message[]> => {
 };
   
 export const getMessagesByUsername = async (username: string): Promise<Message[]> => {
-    const transaction = db?.transaction(STORE_NAME, 'readonly');
+    const transaction = db?.transaction(STORE_NAME, "readonly");
     const store = transaction?.objectStore(STORE_NAME);
     const index = store?.index(INDEX_NAME);
     
@@ -40,6 +40,6 @@ export const closeDB = (): void => {
         db.close();
         db = null;
         
-        console.log('Database connection closed.');
+        console.log("Database connection closed.");
     }
 };
