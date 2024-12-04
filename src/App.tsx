@@ -19,9 +19,9 @@ function App() {
     </ChatMessagesContextProvider>
   </div>;
 
-  // if(!isAuthenticated) {
-  //   content = <LoginWindow />;
-  // }
+  if(!isAuthenticated) {
+    content = <LoginWindow />;
+  }
   
   return content;
 }

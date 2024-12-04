@@ -4,6 +4,8 @@ import CurrentChatHeader from "./CurrentChatHeader";
 import CurrentChatWindow from "./CurrentChatWindow";
 
 export default function ChatWindowSection() {
+    console.log("ChatWindowSection");
+
     return (
         <section className={styles.chatWindow}>
             <CurrentChatHeader />

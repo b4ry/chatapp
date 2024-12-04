@@ -3,6 +3,7 @@ import styles from "./UsersList.module.css";
 import { useChatMessagesContext } from "../../stores/ChatMessagesContext";
 
 export default function UsersList({ users } : { users: User[] }) {
+    console.log("UserList");
     const { currentChatUser, setCurrentChatUser } = useChatMessagesContext();
 
     function handleOnClick(user: User) {

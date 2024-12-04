@@ -7,6 +7,7 @@ import { AuthToken } from "../dtos/AuthToken";
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%])[A-Za-z\d!@#$%]{8,}$/;
 
 export default function LoginWindow() {
+    console.log("LoginWindow");
     const { login } = useAuth();
 
     const [isPasswordValid, setIsPasswordValid] = useState(true);

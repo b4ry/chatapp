@@ -1,10 +1,11 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, ReactNode, useCallback, useContext, useRef, useState } from "react";
 import { Message } from "../dtos/Message";
 
 interface IChatMessagesContext {
-    chatMessages: Map<string, Message[]>;
+    chatMessagesRef: React.MutableRefObject<Map<string, Message[]>>;
     currentChatUser: string;
     setCurrentChatUser: (currentChatUser: string) => void;
+    addMessage: (key: string, message: Message) => void;
 }
 
 export const ChatMessagesContext = createContext<IChatMessagesContext | undefined>(undefined);
@@ -15,12 +16,17 @@ interface ChatMessagesContextProviderProps {
 
 const ChatMessagesContextProvider: React.FC<ChatMessagesContextProviderProps> = ( { children } ) => {
     const [currentChatUser, setCurrentChatUser] = useState("Server");
+    const chatMessagesRef = useRef(new Map<string, Message[]>([ ["Server", [] as Message[]] ]));
 
-    const chatMessages = new Map();
-    chatMessages.set("Server", [] as Message[]);
+    const addMessage = useCallback((key: string, message: Message) => {
+        const messages = chatMessagesRef.current.get(key) || [];
+        
+        messages.push(message);
+        chatMessagesRef.current.set(key, messages);
+    }, []);
 
     return (
-        <ChatMessagesContext.Provider value={{ chatMessages, currentChatUser, setCurrentChatUser }}>
+        <ChatMessagesContext.Provider value={{ chatMessagesRef, currentChatUser, setCurrentChatUser, addMessage }}>
             {children}
         </ChatMessagesContext.Provider>
     );

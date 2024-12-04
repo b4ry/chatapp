@@ -4,6 +4,7 @@ import styles from "./UsersListHeader.module.css";
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 export default function UsersListHeader({ users, onFilterUsers }: { users: User[], onFilterUsers: React.Dispatch<React.SetStateAction<User[]>>}) {
+    console.log("UserListHeader");
     const [searchTerm, setSearchTerm] = useState("");
     
     function handleSearchTermChange(event: React.ChangeEvent<HTMLInputElement>) {

@@ -6,16 +6,9 @@ export default class AESService {
     private aesIV: Uint8Array = new Uint8Array();
     private passwordKey: CryptoKey | null = null;
     private salt: Uint8Array = new Uint8Array([19,88,163,26,214,181,196,117,74,199,4,172,99,180,206,135]);
-    
-    constructor(password: string, publicKey: string) {
-        this.initialize(password).then(() => {  
-            this.sendSymmetricKey(publicKey);
-        });
-    }
 
-    async initialize(password: string) {
+    async initialize(password: string, publicKey: string) {
         this.passwordKey = await this.deriveKey(password);
-
         const username = localStorage.getItem("username");
 
         if(username) {
@@ -28,6 +21,8 @@ export default class AESService {
                 await this.getAesKey(username);
             }
         }
+
+        this.sendSymmetricKey(publicKey);
     }
 
     async generateAESKey() {
