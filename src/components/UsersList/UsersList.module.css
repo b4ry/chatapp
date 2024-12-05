@@ -9,6 +9,7 @@
     font-family: 'Sour Gummy', sans-serif;
     color: var(--emphasize-color);
     padding-top: 5px;
+    overflow-y: scroll;
 }
 
 .user {
