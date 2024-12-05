@@ -7,9 +7,11 @@ import AESService from "../services/AESService";
 import { useChatMessagesContext } from "../stores/ChatMessagesContext";
 import { addMessage, closeDB, getMessages, getMessagesByUsername, initDB } from "../services/IndexedDbService";
 import { Message } from "../dtos/Message";
+import { useAuth } from "../stores/AuthContext";
 
 export default function Chat() {
     console.log("Chat");
+    const { password } = useAuth();
     const aesService = useRef<AESService | null>(null);
     const { addMessage: addMessageToChat, setChatMessages } = useChatMessagesContext();
     
@@ -19,9 +21,8 @@ export default function Chat() {
         initConnection().then(() => {
             onGetAsymmetricPublicKey(async (publicKey: string) => {
                 aesService.current = new AESService();
-    
-                // TODO: use real password
-                aesService.current.initialize("Test123!", publicKey).then(async () => {
+
+                aesService.current.initialize(password, publicKey).then(async () => {
                     await initDB();
                     const storedMessages = await getMessages();
     
@@ -58,7 +59,7 @@ export default function Chat() {
 
             cleanup();
         };
-    }, [addMessageToChat, setChatMessages]);
+    }, [addMessageToChat, setChatMessages, password]);
     
     return (
         <div className={styles.chat}>

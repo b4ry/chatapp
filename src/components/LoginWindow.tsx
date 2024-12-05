@@ -8,14 +8,14 @@ const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%])[A-Za-z\d!@#$
 
 export default function LoginWindow() {
     console.log("LoginWindow");
-    const { login } = useAuth();
+    const { login, setPassword } = useAuth();
 
     const [isPasswordValid, setIsPasswordValid] = useState(true);
     const [isConfirmPasswordValid, setIsConfirmPasswordValid] = useState(true);
     const [isRegistering, setIsRegistering] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submissionErrorMessage, setSubmissionErrorMessage] = useState<string | null>(null);
-    const [password, setPassword] = useState("");
+    const [localPassword, setLocalPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
     const handleOnSubmit = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
@@ -42,6 +42,7 @@ export default function LoginWindow() {
                 
                 login(authToken);
                 localStorage.setItem("username", entries.username.toString())
+                setPassword(entries.password.toString());
             } else {
                 throw new Error(`${response.statusText}`);
             }
@@ -50,12 +51,12 @@ export default function LoginWindow() {
         } finally {
             setIsSubmitting(false);
         }
-    }, [isRegistering, login]);
+    }, [isRegistering, login, setPassword]);
 
     const handlePasswordChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         const input = event.target.value;
 
-        setPassword(input);
+        setLocalPassword(input);
         setIsPasswordValid(passwordRegex.test(input));
 
         if (confirmPassword === input) {
@@ -70,17 +71,17 @@ export default function LoginWindow() {
         
         setConfirmPassword(input);
 
-        if (password === input) {
+        if (localPassword === input) {
             setIsConfirmPasswordValid(true);
         } else {
             setIsConfirmPasswordValid(false);
         }
-    }, [password]);
+    }, [localPassword]);
 
     const toggleWindow = useCallback(() => {
         setIsRegistering((prevState) => !prevState);
         setSubmissionErrorMessage(null);
-        setPassword("");
+        setLocalPassword("");
         setConfirmPassword("");
         setIsPasswordValid(true);
         setIsConfirmPasswordValid(true);
@@ -99,7 +100,7 @@ export default function LoginWindow() {
                     id="password"
                     name="password"
                     onChange={handlePasswordChange}
-                    value={password}
+                    value={localPassword}
                     required
                 />
                 { (isRegistering && !isPasswordValid) && (

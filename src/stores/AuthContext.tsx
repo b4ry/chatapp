@@ -5,8 +5,10 @@ import { RefreshTokenRequest } from "../dtos/RefreshTokenRequest";
 
 interface IAuthContext {
     isAuthenticated: boolean;
+    password: string;
     login: (authToken: AuthToken) => void;
     logout: () => void;
+    setPassword: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const AuthContext = createContext<IAuthContext | undefined>(undefined);
@@ -20,6 +22,8 @@ const accessTokenStorageItemKey: string = "accessToken";
 
 const AuthContextProvider: React.FC<AuthContextProviderProps> = ( { children } ) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [password, setPassword] = useState('');
+
     const timer = useRef<NodeJS.Timeout | null>(null);
 
     const clearTimer = useCallback(() => {
@@ -108,7 +112,7 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ( { children } )
     }, [startLogoutTimer, logout]);
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated, password, login, logout, setPassword }}>
             {children}
         </AuthContext.Provider>
     );
