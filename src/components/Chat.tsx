@@ -8,8 +8,6 @@ import { useChatMessagesContext } from "../stores/ChatMessagesContext";
 import { addMessage, closeDB, getMessages, getMessagesByUsername, initDB } from "../services/IndexedDbService";
 import { Message } from "../dtos/Message";
 
-const SERVER_USERNAME = "Server";
-
 export default function Chat() {
     console.log("Chat");
     const aesService = useRef<AESService | null>(null);
