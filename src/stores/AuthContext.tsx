@@ -120,7 +120,7 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ( { children } )
 
 export default AuthContextProvider;
 
-export const useAuth = () => {
+export const useAuthContext = () => {
     const context = useContext(AuthContext);
 
     if (!context) {

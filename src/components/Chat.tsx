@@ -7,13 +7,14 @@ import AESService from "../services/AESService";
 import { useChatMessagesContext } from "../stores/ChatMessagesContext";
 import { addMessage, closeDB, getMessages, getMessagesByUsername, initDB } from "../services/IndexedDbService";
 import { Message } from "../dtos/Message";
-import { useAuth } from "../stores/AuthContext";
+import { useAuthContext } from "../stores/AuthContext";
 
 export default function Chat() {
     console.log("Chat");
-    const { password } = useAuth();
-    const aesService = useRef<AESService | null>(null);
+    
+    const { password } = useAuthContext();
     const { addMessage: addMessageToChat, setChatMessages } = useChatMessagesContext();
+    const aesService = useRef<AESService | null>(null);
     
     useEffect(() => {
         const initConnection = async () => await startConnection();

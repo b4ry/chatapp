@@ -1,10 +1,10 @@
-import { useAuth } from "../stores/AuthContext";
+import { useAuthContext } from "../stores/AuthContext";
 import styles from "./Header.module.css";
 
 export default function Header() {
     console.log("Header");
 
-    const { logout } = useAuth();
+    const { logout } = useAuthContext();
     const loggedInAsUsername = localStorage.getItem("username");
 
     return (

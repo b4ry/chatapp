@@ -1,14 +1,14 @@
 import { useCallback, useState } from "react";
 import styles from "./LoginWindow.module.css";
 
-import { useAuth } from '../stores/AuthContext';
+import { useAuthContext } from '../stores/AuthContext';
 import { AuthToken } from "../dtos/AuthToken";
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%])[A-Za-z\d!@#$%]{8,}$/;
 
 export default function LoginWindow() {
     console.log("LoginWindow");
-    const { login, setPassword } = useAuth();
+    const { login, setPassword } = useAuthContext();
 
     const [isPasswordValid, setIsPasswordValid] = useState(true);
     const [isConfirmPasswordValid, setIsConfirmPasswordValid] = useState(true);

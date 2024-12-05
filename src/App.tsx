@@ -4,12 +4,12 @@ import './variables.css';
 import styles from "./App.module.css";
 import Header from './components/Header';
 import Chat from './components/Chat';
-import { useAuth } from './stores/AuthContext';
+import { useAuthContext } from './stores/AuthContext';
 import LoginWindow from './components/LoginWindow';
 import ChatMessagesContextProvider from './stores/ChatMessagesContext';
 
 function App() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuthContext();
 
   let content = <div className={styles.app}>
     <Header />
