@@ -8,16 +8,18 @@ const INDEX_NAME = "usernameIndex";
 let db: IDBPDatabase | null = null;
 
 export const initDB = async () => {
-    db = await openDB(DATABASE_NAME, 4, {
-      upgrade(database) {
-            database.deleteObjectStore(STORE_NAME);
-            const store = database.createObjectStore(STORE_NAME, { autoIncrement: true });
+    db = await openDB(DATABASE_NAME, 5, {
+        upgrade(database) {
+            if (database.objectStoreNames.contains(STORE_NAME)) {
+                database.deleteObjectStore(STORE_NAME);
+            }
+            const store = database.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
             store.createIndex(INDEX_NAME, "username", { unique: false });
-      },
+        },
     });
-  
+
     console.log("Database connection open.");
-  };
+};
 
 export const addMessage = async (message: Message) => {
     return db?.add(STORE_NAME, message);

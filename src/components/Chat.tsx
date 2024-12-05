@@ -5,7 +5,7 @@ import UsersListSection from "./UsersList/UsersListSection";
 import { closeConnection, onGetAsymmetricPublicKey, onGetAsymmetricPublicKeyUnsubscribe, onReceiveMessage, onReceiveMessageUnsubscribe, startConnection } from "../services/ChatHubService";
 import AESService from "../services/AESService";
 import { useChatMessagesContext } from "../stores/ChatMessagesContext";
-import { addMessage, closeDB, getMessagesByUsername, initDB } from "../services/IndexedDbService";
+import { addMessage, closeDB, getMessages, getMessagesByUsername, initDB } from "../services/IndexedDbService";
 import { Message } from "../dtos/Message";
 
 const SERVER_USERNAME = "Server";
@@ -13,7 +13,7 @@ const SERVER_USERNAME = "Server";
 export default function Chat() {
     console.log("Chat");
     const aesService = useRef<AESService | null>(null);
-    const { chatMessagesRef, addMessage: addMessageToChat } = useChatMessagesContext();
+    const { addMessage: addMessageToChat, setChatMessages } = useChatMessagesContext();
     
     useEffect(() => {
         const initConnection = async () => await startConnection();
@@ -25,32 +25,28 @@ export default function Chat() {
                 // TODO: use real password
                 aesService.current.initialize("Test123!", publicKey).then(async () => {
                     await initDB();
-                    const storedMessages = await getMessagesByUsername(SERVER_USERNAME);
+                    const storedMessages = await getMessages();
     
                     storedMessages.forEach(async message => {
                         message.message = await aesService.current!.decryptMessage(message.message)!;
     
-                        addMessageToChat(SERVER_USERNAME, message);
+                        addMessageToChat(message);
                     });
                 });
             });
     
-            onReceiveMessage(async (username: string, message: string) => {
-                if(!chatMessagesRef.current.has(username)) {
-                    chatMessagesRef.current.set(username, [] as Message[]);
-                }
-    
+            onReceiveMessage(async (username: string, message: string) => {  
                 const newMessage: Message = {
                     username,
                     message,
-                    order: chatMessagesRef.current.get(username)?.length!
+                    order:  (await getMessagesByUsername(username)).length
                 };
     
                 await addMessage(newMessage);
     
                 newMessage.message = await aesService.current?.decryptMessage(message)!;
     
-                chatMessagesRef.current.get(username)?.push(newMessage);
+                addMessageToChat(newMessage);
             });
         });
 
@@ -64,7 +60,7 @@ export default function Chat() {
 
             cleanup();
         };
-    }, [chatMessagesRef, addMessageToChat]);
+    }, [addMessageToChat, setChatMessages]);
     
     return (
         <div className={styles.chat}>

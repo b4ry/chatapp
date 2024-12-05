@@ -1,11 +1,12 @@
-import { createContext, ReactNode, useCallback, useContext, useRef, useState } from "react";
+import { createContext, ReactNode, useCallback, useContext, useState } from "react";
 import { Message } from "../dtos/Message";
 
 interface IChatMessagesContext {
-    chatMessagesRef: React.MutableRefObject<Map<string, Message[]>>;
+    chatMessages: Map<string, Message[]>;
     currentChatUser: string;
     setCurrentChatUser: (currentChatUser: string) => void;
-    addMessage: (key: string, message: Message) => void;
+    addMessage: (message: Message) => void;
+    setChatMessages: React.Dispatch<React.SetStateAction<Map<string, Message[]>>>;
 }
 
 export const ChatMessagesContext = createContext<IChatMessagesContext | undefined>(undefined);
@@ -16,17 +17,24 @@ interface ChatMessagesContextProviderProps {
 
 const ChatMessagesContextProvider: React.FC<ChatMessagesContextProviderProps> = ( { children } ) => {
     const [currentChatUser, setCurrentChatUser] = useState("Server");
-    const chatMessagesRef = useRef(new Map<string, Message[]>([ ["Server", [] as Message[]] ]));
+    const [chatMessages, setChatMessages] = useState(new Map<string, Message[]>([ ["Server", []] ]));
 
-    const addMessage = useCallback((key: string, message: Message) => {
-        const messages = chatMessagesRef.current.get(key) || [];
-        
-        messages.push(message);
-        chatMessagesRef.current.set(key, messages);
+    const addMessage = useCallback((message: Message) => {
+        setChatMessages(prev => {
+            const newMap = new Map(prev);
+            const userMessages = newMap.get(message.username) || [];
+            
+            if (!userMessages.some(msg => msg.id === message.id)) {
+                userMessages.push(message);
+                newMap.set(message.username, userMessages);
+            }
+            
+            return newMap;
+        });
     }, []);
 
     return (
-        <ChatMessagesContext.Provider value={{ chatMessagesRef, currentChatUser, setCurrentChatUser, addMessage }}>
+        <ChatMessagesContext.Provider value={{ chatMessages, currentChatUser, setCurrentChatUser, addMessage, setChatMessages }}>
             {children}
         </ChatMessagesContext.Provider>
     );
