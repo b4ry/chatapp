@@ -6,7 +6,6 @@ interface IChatMessagesContext {
     currentChatUser: string;
     setCurrentChatUser: (currentChatUser: string) => void;
     addMessage: (message: Message) => void;
-    setChatMessages: React.Dispatch<React.SetStateAction<Map<string, Message[]>>>;
 }
 
 export const ChatMessagesContext = createContext<IChatMessagesContext | undefined>(undefined);
@@ -24,17 +23,15 @@ const ChatMessagesContextProvider: React.FC<ChatMessagesContextProviderProps> = 
             const newMap = new Map(prev);
             const userMessages = newMap.get(message.username) || [];
             
-            if (!userMessages.some(msg => msg.id === message.id)) {
-                userMessages.push(message);
-                newMap.set(message.username, userMessages);
-            }
+            userMessages.push(message);
+            newMap.set(message.username, userMessages);
             
             return newMap;
         });
     }, []);
 
     return (
-        <ChatMessagesContext.Provider value={{ chatMessages, currentChatUser, setCurrentChatUser, addMessage, setChatMessages }}>
+        <ChatMessagesContext.Provider value={{ chatMessages, currentChatUser, setCurrentChatUser, addMessage }}>
             {children}
         </ChatMessagesContext.Provider>
     );

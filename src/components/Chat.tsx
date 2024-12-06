@@ -11,9 +11,9 @@ import { useAuthContext } from "../stores/AuthContext";
 
 export default function Chat() {
     console.log("Chat");
-    
+
     const { password } = useAuthContext();
-    const { addMessage: addMessageToChat, setChatMessages } = useChatMessagesContext();
+    const { addMessage: addMessageToChat } = useChatMessagesContext();
     const aesService = useRef<AESService | null>(null);
     
     useEffect(() => {
@@ -60,7 +60,7 @@ export default function Chat() {
 
             cleanup();
         };
-    }, [addMessageToChat, setChatMessages, password]);
+    }, [addMessageToChat, password]);
     
     return (
         <div className={styles.chat}>
