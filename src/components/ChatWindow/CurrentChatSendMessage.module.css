@@ -1,4 +1,20 @@
 .currentChatSendMessage {
     grid-area: currentChatSendMessage;
     background-color: var(--secondary-color);
+    max-width: 100%;
+}
+
+.messageArea {
+    width: calc(100% - 40px);
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 10px;
+    box-sizing: border-box;
+    resize: none;
+    outline: none;
+    border-radius: 5px;
+    border-width: 0;
+    font-family: 'Sour Gummy', sans-serif;
+    font-size: large;
+    background-color: var(--primary-color);
 }

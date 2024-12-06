@@ -10,7 +10,8 @@ enum ListenerMethodNames {
 }
 
 enum ChatHubEndpointNames {
-    StoreSymmetricKey = "StoreSymmetricKey"
+    StoreSymmetricKey = "StoreSymmetricKey",
+    SendMessage = "SendMessage"
 }
 
 const connection = new signalR.HubConnectionBuilder()
@@ -93,6 +94,10 @@ export const onReceiveMessageUnsubscribe = () => {
     connection.off(ListenerMethodNames.ReceiveMessage);
 }
 
-export const invokeStoreSymmetricKey = async (encryptedAes: [string, string]) => {
+export const storeSymmetricKey = async (encryptedAes: [string, string]) => {
     await connection.invoke(ChatHubEndpointNames.StoreSymmetricKey, encryptedAes);
+}
+
+export const sendMessage = async (user: string, message: string) => {
+    await connection.invoke(ChatHubEndpointNames.SendMessage, user, message);
 }

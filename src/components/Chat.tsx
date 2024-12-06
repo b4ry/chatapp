@@ -2,10 +2,17 @@ import { useEffect, useRef } from "react";
 import styles from "./Chat.module.css";
 import ChatWindowSection from "./ChatWindow/ChatWindowSection";
 import UsersListSection from "./UsersList/UsersListSection";
-import { closeConnection, onGetAsymmetricPublicKey, onGetAsymmetricPublicKeyUnsubscribe, onReceiveMessage, onReceiveMessageUnsubscribe, startConnection } from "../services/ChatHubService";
+import {
+    closeConnection,
+    onGetAsymmetricPublicKey,
+    onGetAsymmetricPublicKeyUnsubscribe,
+    onReceiveMessage,
+    onReceiveMessageUnsubscribe,
+    startConnection
+} from "../services/ChatHubService";
 import AESService from "../services/AESService";
 import { useChatMessagesContext } from "../stores/ChatMessagesContext";
-import { addMessage, closeDB, getMessages, getMessagesByUsername, initDB } from "../services/IndexedDbService";
+import { addMessage, closeDB, getMessages, initDB } from "../services/IndexedDbService";
 import { Message } from "../dtos/Message";
 import { useAuthContext } from "../stores/AuthContext";
 
@@ -35,17 +42,19 @@ export default function Chat() {
                 });
             });
     
-            onReceiveMessage(async (username: string, message: string) => {  
+            onReceiveMessage(async (username: string, message: string) => {     
+                const id = (await addMessage(username, message, true)) as number;
+    
+                // TODO: refactor this and maybe move everything to addMessageToChat
+                const decryptedMessage = await aesService.current?.decryptMessage(message)!;
+    
                 const newMessage: Message = {
+                    message: decryptedMessage,
                     username,
-                    message,
-                    order:  (await getMessagesByUsername(username)).length
-                };
-    
-                await addMessage(newMessage);
-    
-                newMessage.message = await aesService.current?.decryptMessage(message)!;
-    
+                    id,
+                    external: true
+                }
+
                 addMessageToChat(newMessage);
             });
         });
@@ -64,7 +73,7 @@ export default function Chat() {
     
     return (
         <div className={styles.chat}>
-            <ChatWindowSection />
+            <ChatWindowSection aesService={aesService}/>
             <UsersListSection />
         </div>
     );

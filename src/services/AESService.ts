@@ -1,4 +1,4 @@
-import { invokeStoreSymmetricKey } from "./ChatHubService";
+import { storeSymmetricKey } from "./ChatHubService";
 import { parseRSAKey } from "./RSAService";
 
 export default class AESService {
@@ -97,6 +97,23 @@ export default class AESService {
         return dec.decode(decryptedText);
     }
 
+    async encryptMessage(message: string): Promise<string> {
+        const enc = new TextEncoder();
+        const encryptedText = await crypto.subtle.encrypt(
+            {
+                name: 'AES-CBC',
+                iv: this.aesIV
+            },
+            this.aesKey!,
+            enc.encode(message)
+        );
+
+        const encryptedTextBytes = new Uint8Array(encryptedText);
+        const binaryString = String.fromCharCode.apply(null, encryptedTextBytes as unknown as number[]);
+
+        return btoa(binaryString);
+    }
+
     async decryptMessage(message: string): Promise<string> {
         const encryptedTextBytes = this.base64ToUint8Array(message);
         const decryptedText = await crypto.subtle.decrypt(
@@ -165,6 +182,6 @@ export default class AESService {
         const encryptedAesKeyBase64 = btoa(encryptedAesKey);
         const encryptedAesIVBase64 = btoa(encryptedAesIV);
     
-        await invokeStoreSymmetricKey([encryptedAesKeyBase64, encryptedAesIVBase64]);
+        await storeSymmetricKey([encryptedAesKeyBase64, encryptedAesIVBase64]);
     }
 }

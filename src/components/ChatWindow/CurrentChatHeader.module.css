@@ -2,5 +2,6 @@
     grid-area: currentChatHeader;
     background-color: var(--secondary-color);
     font-family: 'Sour Gummy', sans-serif;
+    font-size: large;
     padding-left: 10px;
 }

@@ -8,7 +8,7 @@ const INDEX_NAME = "usernameIndex";
 let db: IDBPDatabase | null = null;
 
 export const initDB = async () => {
-    db = await openDB(DATABASE_NAME, 5, {
+    db = await openDB(DATABASE_NAME, 6, {
         upgrade(database) {
             if (database.objectStoreNames.contains(STORE_NAME)) {
                 database.deleteObjectStore(STORE_NAME);
@@ -21,8 +21,14 @@ export const initDB = async () => {
     console.log("Database connection open.");
 };
 
-export const addMessage = async (message: Message) => {
-    return db?.add(STORE_NAME, message);
+export const addMessage = async (user: string, message: string, external: boolean) => {
+    const newMessage: Message = {
+        username: user,
+        message,
+        external
+    }
+
+    return db?.add(STORE_NAME, newMessage);
 };
 
 export const getMessages = async (): Promise<Message[]> => {
