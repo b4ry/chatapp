@@ -5,8 +5,6 @@ export default function CurrentChatWindow() {
     console.log("CurrentChatWindow");
     const { chatMessages, currentChatUser } = useChatMessagesContext();
 
-    console.log(chatMessages.get(currentChatUser));
-
     return (
         <div className={styles.currentChatWindow}>
             {chatMessages.get(currentChatUser)?.map(message => 
