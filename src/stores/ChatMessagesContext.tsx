@@ -20,13 +20,8 @@ const ChatMessagesContextProvider: React.FC<ChatMessagesContextProviderProps> = 
 
     const addMessage = useCallback((message: Message) => {
         setChatMessages(prev => {
-            const userMessages = prev.get(message.username) || [];
-
-            if(userMessages.find(m => m.id === message.id)) {
-                return prev;
-            }
-
             const newMap = new Map(prev);
+            const userMessages = newMap.get(message.username) || [];
 
             userMessages.push(message);
             newMap.set(message.username, userMessages);
