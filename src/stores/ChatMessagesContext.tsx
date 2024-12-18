@@ -3,9 +3,11 @@ import { Message } from "../dtos/Message";
 
 interface IChatMessagesContext {
     chatMessages: Map<string, Message[]>;
+    unreadMessages: Set<string>;
     currentChatUser: string;
-    setCurrentChatUser: (currentChatUser: string) => void;
+    setChatUser: (newChatUser: string) => void;
     addMessage: (message: Message) => void;
+    setChatMessages: React.Dispatch<React.SetStateAction<Map<string, Message[]>>>;
 }
 
 export const ChatMessagesContext = createContext<IChatMessagesContext | undefined>(undefined);
@@ -17,6 +19,7 @@ interface ChatMessagesContextProviderProps {
 const ChatMessagesContextProvider: React.FC<ChatMessagesContextProviderProps> = ( { children } ) => {
     const [currentChatUser, setCurrentChatUser] = useState("Server");
     const [chatMessages, setChatMessages] = useState(new Map<string, Message[]>([ ["Server", []] ]));
+    const [unreadMessages, setUnreadMessages] = useState(new Set<string>());
 
     const addMessage = useCallback((message: Message) => {
         setChatMessages(prev => {
@@ -25,13 +28,27 @@ const ChatMessagesContextProvider: React.FC<ChatMessagesContextProviderProps> = 
 
             userMessages.push(message);
             newMap.set(message.username, userMessages);
+
+            if(message.username !== currentChatUser) {
+                setUnreadMessages(prev => new Set<string>(prev).add(message.username));
+            }
             
             return newMap;
+        });
+    }, [currentChatUser]);
+
+    const setChatUser = useCallback((newChatUser: string) => {
+        setCurrentChatUser(newChatUser);
+        setUnreadMessages(prev => {
+            const newUnreadMessages = new Set<string>(prev);
+            newUnreadMessages.delete(newChatUser);
+
+            return newUnreadMessages;
         });
     }, []);
 
     return (
-        <ChatMessagesContext.Provider value={{ chatMessages, currentChatUser, setCurrentChatUser, addMessage }}>
+        <ChatMessagesContext.Provider value={{ chatMessages, unreadMessages, currentChatUser, setChatUser, addMessage, setChatMessages }}>
             {children}
         </ChatMessagesContext.Provider>
     );

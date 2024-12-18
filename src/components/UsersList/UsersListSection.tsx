@@ -3,7 +3,14 @@ import styles from "./UsersListSection.module.css";
 import UsersListHeader from "./UsersListHeader";
 import UsersList from "./UsersList";
 import { useEffect, useState } from "react";
-import { onGetUsers, onGetUsersUnsubscribe, onUserJoinsChat, onUserJoinsChatUnsubscribe, onUserLogsOut, onUserLogsOutUnsubscribe } from "../../services/ChatHubService";
+import {
+    onGetUsers,
+    onGetUsersUnsubscribe,
+    onUserJoinsChat,
+    onUserJoinsChatUnsubscribe,
+    onUserLogsOut,
+    onUserLogsOutUnsubscribe
+} from "../../services/ChatHubService";
 import { User } from "./User";
 import React from "react";
 

@@ -4,10 +4,10 @@ import { useChatMessagesContext } from "../../stores/ChatMessagesContext";
 
 export default function UsersList({ users } : { users: User[] }) {
     console.log("UserList");
-    const { currentChatUser, setCurrentChatUser } = useChatMessagesContext();
+    const { currentChatUser, unreadMessages, setChatUser } = useChatMessagesContext();
 
     function handleOnClick(user: User) {
-        setCurrentChatUser(user.username);
+        setChatUser(user.username);
     }
 
     return (
@@ -17,7 +17,7 @@ export default function UsersList({ users } : { users: User[] }) {
                     key={user.username}
                     className={`${styles.user} ${user.username === currentChatUser ? styles.isActive : ''}`}
                     onClick={() => handleOnClick(user)}>
-                    {user.username}
+                    { unreadMessages.has(user.username) ? user.username + " *" : user.username }
                 </button>
             )}
         </ul>

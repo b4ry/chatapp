@@ -29,7 +29,6 @@ export default function CurrentChatSendMessage({ aesService }: { aesService: Rea
             }
 
             addMessageToChat(newMessage);
-  
             await sendMessage(currentChatUser, encryptedMessage!);
         }
     };
