@@ -20,12 +20,13 @@ export default function CurrentChatSendMessage({ aesService }: { aesService: Rea
             
             const encryptedMessage = await aesService.current?.encryptMessage(inputValue);
 
-            const id = (await addMessage(currentChatUser, encryptedMessage!, false)) as number;
+            const messageData = await (addMessage(currentChatUser, encryptedMessage!, false)) as [number, string];
             const newMessage: Message = {
                 message: inputValue,
                 username: currentChatUser,
-                id,
-                external: false
+                id: messageData[0],
+                external: false,
+                timestamp: messageData[1]
             }
 
             addMessageToChat(newMessage);

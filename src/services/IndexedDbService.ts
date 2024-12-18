@@ -8,11 +8,12 @@ const INDEX_NAME = "usernameIndex";
 let db: IDBPDatabase | null = null;
 
 export const initDB = async () => {
-    db = await openDB(DATABASE_NAME, 6, {
+    db = await openDB(DATABASE_NAME, 7, {
         upgrade(database) {
             if (database.objectStoreNames.contains(STORE_NAME)) {
                 database.deleteObjectStore(STORE_NAME);
             }
+            
             const store = database.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
             store.createIndex(INDEX_NAME, "username", { unique: false });
         },
@@ -22,13 +23,15 @@ export const initDB = async () => {
 };
 
 export const addMessage = async (user: string, message: string, external: boolean) => {
+    const timestamp = new Date().toISOString();
     const newMessage: Message = {
         username: user,
         message,
-        external
+        external,
+        timestamp
     }
 
-    return db?.add(STORE_NAME, newMessage);
+    return [await db?.add(STORE_NAME, newMessage), timestamp];
 };
 
 export const getMessages = async (): Promise<Message[]> => {

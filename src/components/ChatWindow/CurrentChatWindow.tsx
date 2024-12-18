@@ -3,13 +3,13 @@ import styles from "./CurrentChatWindow.module.css";
 
 export default function CurrentChatWindow() {
     console.log("CurrentChatWindow");
-    const { chatMessages, currentChatUser } = useChatMessagesContext();
+    const { getUserMessages } = useChatMessagesContext();
 
     return (
         <div className={styles.currentChatWindow}>
-            {chatMessages.get(currentChatUser)?.map(message => 
+            {getUserMessages()?.map(message => 
                 <div
-                    key={message.id}
+                    key={message.timestamp}
                     className={`${styles.message} ${message.external ? styles.externalMessage : styles.userMessage}`}
                 >
                     {message.message}

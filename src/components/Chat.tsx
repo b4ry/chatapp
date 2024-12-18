@@ -73,15 +73,16 @@ export default function Chat() {
 
     useEffect(() => {
         onReceiveMessage(async (username: string, message: string) => {     
-            const id = (await addMessage(username, message, true)) as number;
+            const messageData = await (addMessage(username, message, true)) as [number, string];
 
             // TODO: refactor this and maybe move everything to addMessageToChat
             const decryptedMessage = await aesService.current?.decryptMessage(message)!;
             const newMessage: Message = {
                 message: decryptedMessage,
                 username,
-                id,
-                external: true
+                id: messageData[0],
+                external: true,
+                timestamp: message[1]
             };
 
             addMessageToChat(newMessage);

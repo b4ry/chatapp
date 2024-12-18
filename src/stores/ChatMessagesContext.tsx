@@ -2,12 +2,12 @@ import { createContext, ReactNode, useCallback, useContext, useState } from "rea
 import { Message } from "../dtos/Message";
 
 interface IChatMessagesContext {
-    chatMessages: Map<string, Message[]>;
     unreadMessages: Set<string>;
     currentChatUser: string;
     setChatUser: (newChatUser: string) => void;
     addMessage: (message: Message) => void;
     setChatMessages: React.Dispatch<React.SetStateAction<Map<string, Message[]>>>;
+    getUserMessages: () => Message[] | undefined;
 }
 
 export const ChatMessagesContext = createContext<IChatMessagesContext | undefined>(undefined);
@@ -37,6 +37,17 @@ const ChatMessagesContextProvider: React.FC<ChatMessagesContextProviderProps> = 
         });
     }, [currentChatUser]);
 
+    const getUserMessages = useCallback(() => {
+        const messages = chatMessages.get(currentChatUser);
+        const uniqueMessages = new Set<Message>();
+
+        messages?.forEach(message => {
+            uniqueMessages.add(message);
+        });
+
+        return Array.from(uniqueMessages);
+    }, [chatMessages, currentChatUser]);
+
     const setChatUser = useCallback((newChatUser: string) => {
         setCurrentChatUser(newChatUser);
         setUnreadMessages(prev => {
@@ -48,7 +59,7 @@ const ChatMessagesContextProvider: React.FC<ChatMessagesContextProviderProps> = 
     }, []);
 
     return (
-        <ChatMessagesContext.Provider value={{ chatMessages, unreadMessages, currentChatUser, setChatUser, addMessage, setChatMessages }}>
+        <ChatMessagesContext.Provider value={{ unreadMessages, currentChatUser, setChatUser, addMessage, setChatMessages, getUserMessages }}>
             {children}
         </ChatMessagesContext.Provider>
     );

@@ -3,4 +3,5 @@ export type Message = {
     username: string;
     message: string;
     external: boolean;
+    timestamp: string;
 }
